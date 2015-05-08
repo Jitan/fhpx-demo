@@ -3,4 +3,6 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="search_title">Search</string>
+    <string name="toolbar_search_hint">Search</string>
 </resources>

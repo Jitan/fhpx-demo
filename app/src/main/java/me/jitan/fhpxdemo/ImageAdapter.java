@@ -37,6 +37,11 @@ public class ImageAdapter extends BaseAdapter
         return items.get(i);
     }
 
+    public List<Item> getItems()
+    {
+        return items;
+    }
+
     @Override
     public long getItemId(int i)
     {

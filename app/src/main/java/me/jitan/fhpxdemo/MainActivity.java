@@ -1,5 +1,6 @@
 package me.jitan.fhpxdemo;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -7,12 +8,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Toast;
 
 
 public class MainActivity extends AppCompatActivity
 {
+    private ImageAdapter mImageAdapter;
+    private MenuItem mSearchAction;
+    private Boolean mSearchOpened;
+    private String mSearchQuery;
+    private Drawable mIconOpenSearch, mIconCloseSearch;
+    private EditText mSearchField;
+    private Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -20,13 +29,16 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
+        // Toolbar
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (mToolbar != null) {
+            setSupportActionBar(mToolbar);
         }
 
+        // Gridview
         GridView gridview = (GridView) findViewById(R.id.gridview);
-        gridview.setAdapter(new ImageAdapter(this));
+        mImageAdapter = new ImageAdapter(this);
+        gridview.setAdapter(mImageAdapter);
 
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
@@ -37,6 +49,16 @@ public class MainActivity extends AppCompatActivity
                         Toast.LENGTH_SHORT).show();
             }
         });
+
+        // Searchbar
+        mSearchOpened = false;
+        mSearchQuery = "";
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        mSearchAction = menu.findItem(R.id.action_search);
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -61,6 +83,20 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
 
+        if (id == R.id.action_search) {
+            if (mSearchOpened) {
+                closeSearchBar();
+            } else {
+                openSearchBar(mSearchQuery);
+            }
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
+    }
+
+    private void openSearchBar(String queryText)
+    {
+        mToolbar.
     }
 }
