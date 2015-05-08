@@ -1,0 +1,14 @@
+# added by me
+/.idea/misc.xml
+*.iml
+.idea/gradle.xml
+.idea/modules.xml
+
+# intellij default
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
+/captures
