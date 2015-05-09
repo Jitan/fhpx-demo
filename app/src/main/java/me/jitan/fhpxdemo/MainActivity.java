@@ -20,6 +20,15 @@ import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class MainActivity extends AppCompatActivity
 {
@@ -28,11 +37,9 @@ public class MainActivity extends AppCompatActivity
     private Boolean mSearchOpened;
     private String mSearchQuery;
     private EditText mSearchField;
-    private Toolbar mToolbar;
     private ActionBar mActionBar;
     private GridView mGridView;
     private Drawable mIconCloseSearch, mIconOpenSearch;
-    private SearchWatcher mSearchWatcher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -40,24 +47,35 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Toolbar
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (mToolbar != null)
+//        Ion.getDefault(this).configure().setLogging("fhpx-ion", Log.DEBUG);
+        Ion.getDefault(this).getHttpClient().getSSLSocketMiddleware().setSpdyEnabled(false);
+
+        setupToolbar();
+        setupGridView();
+        search();
+    }
+
+    private void setupToolbar()
+    {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (toolbar != null)
         {
-            setSupportActionBar(mToolbar);
+            setSupportActionBar(toolbar);
         }
         mActionBar = getSupportActionBar();
         mSearchOpened = false;
         mSearchQuery = "";
+
+        // Non-deprecated form of getDrawable only available in API-21
         mIconCloseSearch = getResources().getDrawable(R.drawable.ic_close);
         mIconOpenSearch = getResources().getDrawable(R.drawable.ic_search);
-        mSearchWatcher = new SearchWatcher();
-        mSearchField = (EditText) findViewById(R.id.etSearch);
-        mSearchField.addTextChangedListener(mSearchWatcher);
+        mSearchField = (EditText) findViewById(R.id.editTextSearch);
+        mSearchField.addTextChangedListener(new SearchWatcher());
         setKeyboardSearchListener();
+    }
 
-
-        // Gridview
+    private void setupGridView()
+    {
         mGridView = (GridView) findViewById(R.id.gridview);
         mImageAdapter = new ImageAdapter(this);
         mGridView.setAdapter(mImageAdapter);
@@ -71,21 +89,6 @@ public class MainActivity extends AppCompatActivity
                         Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu)
-    {
-        mSearchAction = menu.findItem(R.id.action_search);
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
     }
 
     @Override
@@ -112,16 +115,6 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    public void hideKeyboard()
-    {
-        View view = getCurrentFocus();
-        if (view != null)
-        {
-            InputMethodManager manager = (InputMethodManager) getSystemService(
-                    Context.INPUT_METHOD_SERVICE);
-            manager.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        }
-    }
 
     private void closeSearchBar()
     {
@@ -152,33 +145,23 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public void hideKeyboard()
+    {
+        View view = getCurrentFocus();
+        if (view != null)
+        {
+            InputMethodManager manager = (InputMethodManager) getSystemService(
+                    Context.INPUT_METHOD_SERVICE);
+            manager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
     private void showKeyboard()
     {
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(
                 Context.INPUT_METHOD_SERVICE);
         // only will trigger it if no physical keyboard is open
         inputMethodManager.showSoftInput(mSearchField, InputMethodManager.SHOW_IMPLICIT);
-    }
-    private class SearchWatcher implements TextWatcher
-    {
-
-        @Override
-        public void beforeTextChanged(CharSequence c, int i, int i2, int i3)
-        {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence c, int i, int i2, int i3)
-        {
-
-        }
-        @Override
-        public void afterTextChanged(Editable editable)
-        {
-            mSearchQuery = mSearchField.getText().toString();
-        }
-
     }
 
     private void setKeyboardSearchListener()
@@ -199,5 +182,67 @@ public class MainActivity extends AppCompatActivity
                 return false;
             }
         });
+    }
+
+    private void search()
+    {
+        Ion.with(this)
+                .load("https://api.500px.com/v1/photos?feature=popular&sort=rating&image_size=3" +
+                        "&consumer_key=dNRpNAjucR4By3KM9HvFWgb4fa1rNArB6R2nBfv2")
+                .asJsonObject()
+                .setCallback(new FutureCallback<JsonObject>()
+                {
+                    @Override
+                    public void onCompleted(Exception e, JsonObject result)
+                    {
+                        List<String> imageUrls = new ArrayList<>();
+                        JsonArray photos = result.getAsJsonArray("photos");
+
+                        for (JsonElement photo : photos)
+                        {
+                            String imageUrl = photo.getAsJsonObject().get("image_url")
+                                    .getAsString();
+                            mImageAdapter.add(imageUrl);
+                        }
+                    }
+                });
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu)
+    {
+        mSearchAction = menu.findItem(R.id.action_search);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    private class SearchWatcher implements TextWatcher
+    {
+
+        @Override
+        public void beforeTextChanged(CharSequence c, int i, int i2, int i3)
+        {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence c, int i, int i2, int i3)
+        {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable)
+        {
+            mSearchQuery = mSearchField.getText().toString();
+        }
+
     }
 }

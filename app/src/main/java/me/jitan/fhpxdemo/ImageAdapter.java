@@ -4,84 +4,34 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.koushikdutta.ion.Ion;
 
-public class ImageAdapter extends BaseAdapter
+public class ImageAdapter extends ArrayAdapter<String>
 {
-    private List<Item> items = new ArrayList<>();
-    private LayoutInflater inflater;
+    private LayoutInflater mInflater;
 
     public ImageAdapter(Context context)
     {
-        inflater = LayoutInflater.from(context);
+        super(context, 0);
+        mInflater = LayoutInflater.from(context);
+    }
 
-        for (int i = 0; i < 30; i++)
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent)
+    {
+        if(convertView == null)
         {
-            items.add(new Item("Image " + i, R.drawable.placeholder_thumb));
-        }
-    }
-
-    @Override
-    public int getCount() {
-        return items.size();
-    }
-
-    @Override
-    public Object getItem(int i)
-    {
-        return items.get(i);
-    }
-
-    public List<Item> getItems()
-    {
-        return items;
-    }
-
-    @Override
-    public long getItemId(int i)
-    {
-        return items.get(i).drawableId;
-    }
-
-    @Override
-    public View getView(int i, View view, ViewGroup viewGroup)
-    {
-        View v = view;
-        ImageView picture;
-        TextView name;
-
-        if(v == null)
-        {
-            v = inflater.inflate(R.layout.gridview_item, viewGroup, false);
-            v.setTag(R.id.picture, v.findViewById(R.id.picture));
-            v.setTag(R.id.text, v.findViewById(R.id.text));
+            convertView = mInflater.inflate(R.layout.square_gridview_image, parent, false);
         }
 
-        picture = (ImageView)v.getTag(R.id.picture);
-        name = (TextView)v.getTag(R.id.text);
+        final ImageView imageView = (ImageView) convertView.findViewById(R.id.image);
 
-        Item item = (Item)getItem(i);
+        Ion.with(imageView).load(getItem(position));
 
-        picture.setImageResource(item.drawableId);
-        name.setText(item.name);
-
-        return v;
+        return convertView;
     }
 
-    private class Item
-    {
-        final String name;
-        final int drawableId;
-
-        Item(String name, int drawableId)
-        {
-            this.name = name;
-            this.drawableId = drawableId;
-        }
-    }
 }
