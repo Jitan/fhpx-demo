@@ -2,8 +2,11 @@ package me.jitan.fhpxdemo;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,9 +22,12 @@ public class MainActivity extends AppCompatActivity
     private MenuItem mSearchAction;
     private Boolean mSearchOpened;
     private String mSearchQuery;
-    private Drawable mIconOpenSearch, mIconCloseSearch;
     private EditText mSearchField;
     private Toolbar mToolbar;
+    private ActionBar mActionBar;
+    private GridView mGridView;
+    private Drawable mIconCloseSearch, mIconOpenSearch;
+    private SearchWatcher mSearchWatcher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -31,16 +37,24 @@ public class MainActivity extends AppCompatActivity
 
         // Toolbar
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (mToolbar != null) {
+        if (mToolbar != null)
+        {
             setSupportActionBar(mToolbar);
         }
+        mActionBar = getSupportActionBar();
+        mSearchOpened = false;
+        mSearchQuery = "";
+        mIconCloseSearch = getResources().getDrawable(R.drawable.ic_close);
+        mIconOpenSearch = getResources().getDrawable(R.drawable.ic_search);
+        mSearchWatcher = new SearchWatcher();
+
 
         // Gridview
-        GridView gridview = (GridView) findViewById(R.id.gridview);
+        mGridView = (GridView) findViewById(R.id.gridview);
         mImageAdapter = new ImageAdapter(this);
-        gridview.setAdapter(mImageAdapter);
+        mGridView.setAdapter(mImageAdapter);
 
-        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             public void onItemClick(AdapterView<?> parent, View v,
                     int position, long id)
@@ -49,14 +63,11 @@ public class MainActivity extends AppCompatActivity
                         Toast.LENGTH_SHORT).show();
             }
         });
-
-        // Searchbar
-        mSearchOpened = false;
-        mSearchQuery = "";
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
+    public boolean onPrepareOptionsMenu(Menu menu)
+    {
         mSearchAction = menu.findItem(R.id.action_search);
         return super.onPrepareOptionsMenu(menu);
     }
@@ -72,31 +83,78 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings)
+        switch (item.getItemId())
         {
-            return true;
-        }
+            case R.id.action_settings:
+                return true;
 
-        if (id == R.id.action_search) {
-            if (mSearchOpened) {
-                closeSearchBar();
-            } else {
-                openSearchBar(mSearchQuery);
-            }
-            return true;
+            case R.id.action_search:
+                if (mSearchOpened)
+                {
+                    closeSearchBar();
+                }
+                else
+                {
+                    openSearchBar(mSearchQuery);
+                }
+                return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
     private void openSearchBar(String queryText)
     {
-        mToolbar.
+
+        // Set custom view on action bar.
+        if (mActionBar != null)
+        {
+            // Search edit text field setup.
+            mSearchField = (EditText) findViewById(R.id.etSearch);
+            mSearchField.setVisibility(View.VISIBLE);
+            mSearchField.addTextChangedListener(mSearchWatcher);
+            mSearchField.setText(queryText);
+            mSearchField.requestFocus();
+
+            // Change search icon accordingly.
+            mSearchAction.setIcon(mIconCloseSearch);
+            mSearchOpened = true;
+        }
+    }
+
+    private void closeSearchBar()
+    {
+        // Remove custom view.
+        if (mActionBar != null)
+        {
+            mSearchField.setVisibility(View.GONE);
+        }
+
+        // Change search icon accordingly.
+        mSearchAction.setIcon(mIconOpenSearch);
+        mSearchOpened = false;
+
+    }
+
+    private class SearchWatcher implements TextWatcher
+    {
+        @Override
+        public void beforeTextChanged(CharSequence c, int i, int i2, int i3)
+        {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence c, int i, int i2, int i3)
+        {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable)
+        {
+            mSearchQuery = mSearchField.getText().toString();
+            Toast.makeText(getApplicationContext(), mSearchQuery, Toast.LENGTH_SHORT).show();
+        }
+
     }
 }

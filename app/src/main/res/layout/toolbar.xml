@@ -11,5 +11,6 @@
         android:layout_height="wrap_content"
         android:inputType="text"
         android:imeOptions="actionSearch"
-        android:hint="@string/toolbar_search_hint"/>
+        android:hint="@string/toolbar_search_hint"
+        android:visibility="gone"/>
 </android.support.v7.widget.Toolbar>
