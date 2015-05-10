@@ -20,14 +20,7 @@ import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity
@@ -52,7 +45,7 @@ public class MainActivity extends AppCompatActivity
 
         setupToolbar();
         setupGridView();
-        search();
+        IonClient.getInstance(this).loadPopularImages(mImageAdapter);
     }
 
     private void setupToolbar()
@@ -124,7 +117,7 @@ public class MainActivity extends AppCompatActivity
             mSearchField.setVisibility(View.GONE);
         }
 
-        // Change search icon accordingly.
+        // Change loadPopularImages icon accordingly.
         mSearchAction.setIcon(mIconOpenSearch);
         mSearchOpened = false;
     }
@@ -139,7 +132,7 @@ public class MainActivity extends AppCompatActivity
             mSearchField.setText(queryText);
             mSearchField.requestFocus();
 
-            // Change search icon accordingly.
+            // Change loadPopularImages icon accordingly.
             mSearchAction.setIcon(mIconCloseSearch);
             mSearchOpened = true;
         }
@@ -184,29 +177,7 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private void search()
-    {
-        Ion.with(this)
-                .load("https://api.500px.com/v1/photos?feature=popular&sort=rating&image_size=3" +
-                        "&consumer_key=dNRpNAjucR4By3KM9HvFWgb4fa1rNArB6R2nBfv2")
-                .asJsonObject()
-                .setCallback(new FutureCallback<JsonObject>()
-                {
-                    @Override
-                    public void onCompleted(Exception e, JsonObject result)
-                    {
-                        List<String> imageUrls = new ArrayList<>();
-                        JsonArray photos = result.getAsJsonArray("photos");
 
-                        for (JsonElement photo : photos)
-                        {
-                            String imageUrl = photo.getAsJsonObject().get("image_url")
-                                    .getAsString();
-                            mImageAdapter.add(imageUrl);
-                        }
-                    }
-                });
-    }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu)
