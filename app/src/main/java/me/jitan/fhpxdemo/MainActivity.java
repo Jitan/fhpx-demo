@@ -15,9 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,14 +24,13 @@ import com.koushikdutta.ion.Ion;
 
 public class MainActivity extends AppCompatActivity
 {
-    private ImageAdapter mImageAdapter;
     private MenuItem mSearchAction;
     private Boolean mSearchOpened;
     private String mSearchQuery;
     private EditText mSearchField;
     private ActionBar mActionBar;
-    private GridView mGridView;
     private Drawable mIconCloseSearch, mIconOpenSearch;
+    private GridFragment mGridFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -43,12 +40,29 @@ public class MainActivity extends AppCompatActivity
 
         Ion.getDefault(this).configure().setLogging("fhpx-ion", Log.DEBUG);
 
-        // Need to disable Spdy to access 500px API, otherwise we get weird errors
+        // Need to disable Spdy to access 500px API with Ion, otherwise we get weird errors.
         Ion.getDefault(this).getHttpClient().getSSLSocketMiddleware().setSpdyEnabled(false);
 
         setupToolbar();
-        setupGridView();
+
+        setupFragments(savedInstanceState);
+
     }
+
+    private void setupFragments(Bundle savedInstanceState)
+    {
+        if (savedInstanceState != null)
+        {
+            return;
+        }
+
+        mGridFragment = new GridFragment();
+
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragment_container, mGridFragment)
+                .commit();
+    }
+
 
     private void setupToolbar()
     {
@@ -67,23 +81,6 @@ public class MainActivity extends AppCompatActivity
         mSearchField = (EditText) findViewById(R.id.editTextSearch);
         mSearchField.addTextChangedListener(new SearchWatcher());
         setKeyboardSearchListener();
-    }
-
-    private void setupGridView()
-    {
-        mGridView = (GridView) findViewById(R.id.gridview);
-        mImageAdapter = new ImageAdapter(this);
-        mGridView.setAdapter(mImageAdapter);
-
-        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
-            public void onItemClick(AdapterView<?> parent, View v,
-                    int position, long id)
-            {
-                Toast.makeText(MainActivity.this, "" + position,
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     @Override
@@ -173,8 +170,7 @@ public class MainActivity extends AppCompatActivity
                             Toast.LENGTH_SHORT).show();
                     hideKeyboard();
 
-                    IonClient.getInstance(v.getContext()).loadSearchResults(mSearchQuery,
-                            mImageAdapter);
+                    mGridFragment.loadSearchResults(mSearchQuery);
                     return true;
                 }
                 return false;
