@@ -9,7 +9,9 @@ import android.widget.ImageView;
 
 import com.koushikdutta.ion.Ion;
 
-public class ImageAdapter extends ArrayAdapter<String>
+import me.jitan.fhpxdemo.model.FhpxPhoto;
+
+public class ImageAdapter extends ArrayAdapter<FhpxPhoto>
 {
     private LayoutInflater mInflater;
 
@@ -29,7 +31,7 @@ public class ImageAdapter extends ArrayAdapter<String>
 
         final ImageView imageView = (ImageView) convertView.findViewById(R.id.image);
 
-        Ion.with(imageView).load(getItem(position));
+        Ion.with(imageView).load(getItem(position).getThumbUrl());
 
         return convertView;
     }

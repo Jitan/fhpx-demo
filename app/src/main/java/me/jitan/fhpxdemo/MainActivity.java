@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,12 +41,13 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        Ion.getDefault(this).configure().setLogging("fhpx-ion", Log.DEBUG);
+        Ion.getDefault(this).configure().setLogging("fhpx-ion", Log.DEBUG);
+
+        // Need to disable Spdy to access 500px API, otherwise we get weird errors
         Ion.getDefault(this).getHttpClient().getSSLSocketMiddleware().setSpdyEnabled(false);
 
         setupToolbar();
         setupGridView();
-        IonClient.getInstance(this).loadPopularImages(mImageAdapter);
     }
 
     private void setupToolbar()
@@ -117,7 +119,7 @@ public class MainActivity extends AppCompatActivity
             mSearchField.setVisibility(View.GONE);
         }
 
-        // Change loadPopularImages icon accordingly.
+        // Change search icon accordingly.
         mSearchAction.setIcon(mIconOpenSearch);
         mSearchOpened = false;
     }
@@ -132,7 +134,7 @@ public class MainActivity extends AppCompatActivity
             mSearchField.setText(queryText);
             mSearchField.requestFocus();
 
-            // Change loadPopularImages icon accordingly.
+            // Change search icon accordingly.
             mSearchAction.setIcon(mIconCloseSearch);
             mSearchOpened = true;
         }
@@ -170,13 +172,15 @@ public class MainActivity extends AppCompatActivity
                     Toast.makeText(getApplicationContext(), "Searching for: " + mSearchQuery,
                             Toast.LENGTH_SHORT).show();
                     hideKeyboard();
+
+                    IonClient.getInstance(v.getContext()).loadSearchResults(mSearchQuery,
+                            mImageAdapter);
                     return true;
                 }
                 return false;
             }
         });
     }
-
 
 
     @Override

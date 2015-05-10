@@ -1,10 +1,10 @@
-package me.jitan.fhpxdemo;
+package me.jitan.fhpxdemo.model;
 
-public class FhpxImage
+public class FhpxPhoto
 {
     private final String thumbUrl, url, authorName;
 
-    public FhpxImage(String thumbUrl, String url, String authorName)
+    public FhpxPhoto(String thumbUrl, String url, String authorName)
     {
         this.thumbUrl = thumbUrl;
         this.url = url;
