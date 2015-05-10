@@ -21,6 +21,11 @@ import android.widget.Toast;
 
 import com.koushikdutta.ion.Ion;
 
+import de.greenrobot.event.EventBus;
+import me.jitan.fhpxdemo.event.LoadPhotoDetailEvent;
+import me.jitan.fhpxdemo.fragment.GridFragment;
+import me.jitan.fhpxdemo.fragment.PhotoDetailFragment;
+
 
 public class MainActivity extends AppCompatActivity
 {
@@ -31,12 +36,14 @@ public class MainActivity extends AppCompatActivity
     private ActionBar mActionBar;
     private Drawable mIconCloseSearch, mIconOpenSearch;
     private GridFragment mGridFragment;
+    private PhotoDetailFragment mPhotoDetailFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        EventBus.getDefault().register(this);
 
         Ion.getDefault(this).configure().setLogging("fhpx-ion", Log.DEBUG);
 
@@ -51,18 +58,38 @@ public class MainActivity extends AppCompatActivity
 
     private void setupFragments(Bundle savedInstanceState)
     {
+        // If we're being restored from a previous state,
+        // then we don't need to do anything and should return or else
+        // we could end up with overlapping fragments.
         if (savedInstanceState != null)
         {
             return;
         }
 
         mGridFragment = new GridFragment();
+        mPhotoDetailFragment = new PhotoDetailFragment();
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragment_container, mGridFragment)
+                .add(R.id.fragment_container, mPhotoDetailFragment)
                 .commit();
+        getSupportFragmentManager().beginTransaction()
+                .hide(mPhotoDetailFragment)
+                .show(mGridFragment)
+                .commit();
+
     }
 
+    public void onEvent(LoadPhotoDetailEvent event)
+    {
+        mPhotoDetailFragment.setPhoto(event.getFhpxPhoto());
+
+        getSupportFragmentManager().beginTransaction()
+                .hide(mGridFragment)
+                .show(mPhotoDetailFragment)
+                .addToBackStack(null)
+                .commit();
+    }
 
     private void setupToolbar()
     {

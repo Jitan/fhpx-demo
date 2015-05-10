@@ -26,7 +26,7 @@ public class ImageAdapter extends ArrayAdapter<FhpxPhoto>
     {
         if(convertView == null)
         {
-            convertView = mInflater.inflate(R.layout.square_image_view, parent, false);
+            convertView = mInflater.inflate(R.layout.grid_item, parent, false);
         }
 
         final ImageView imageView = (ImageView) convertView.findViewById(R.id.image);

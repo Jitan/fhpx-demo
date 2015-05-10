@@ -1,4 +1,4 @@
-package me.jitan.fhpxdemo;
+package me.jitan.fhpxdemo.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -7,12 +7,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.Toast;
+
+import de.greenrobot.event.EventBus;
+import me.jitan.fhpxdemo.ImageAdapter;
+import me.jitan.fhpxdemo.IonClient;
+import me.jitan.fhpxdemo.R;
+import me.jitan.fhpxdemo.event.LoadPhotoDetailEvent;
+import me.jitan.fhpxdemo.model.FhpxPhoto;
 
 public class GridFragment extends Fragment
 {
     private ImageAdapter mImageAdapter;
     private GridView mGridView;
+    private static final EventBus eventBus = EventBus.getDefault();
 
 
     @Override
@@ -30,7 +37,7 @@ public class GridFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState)
     {
-        View view = inflater.inflate(R.layout.fragment_grid_view, container, false);
+        View view = inflater.inflate(R.layout.fragment_grid, container, false);
         mGridView = (GridView) view.findViewById(R.id.gridview);
         mGridView.setAdapter(mImageAdapter);
 
@@ -39,7 +46,8 @@ public class GridFragment extends Fragment
             public void onItemClick(AdapterView<?> parent, View v,
                     int position, long id)
             {
-                Toast.makeText(getActivity(), "" + position, Toast.LENGTH_SHORT).show();
+                FhpxPhoto photoForDetailView = mImageAdapter.getItem(position);
+                eventBus.post(new LoadPhotoDetailEvent(photoForDetailView));
             }
         });
 
