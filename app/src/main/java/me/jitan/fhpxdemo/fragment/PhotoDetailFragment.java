@@ -13,25 +13,22 @@ import com.koushikdutta.ion.Ion;
 
 import me.jitan.fhpxdemo.R;
 import me.jitan.fhpxdemo.model.FhpxPhoto;
+import uk.co.senab.photoview.PhotoViewAttacher;
 
 public class PhotoDetailFragment extends Fragment
 {
     private ImageView mImageView;
     private TextView mTextView;
-
-    public PhotoDetailFragment()
-    {
-
-    }
+    private PhotoViewAttacher mAttacher;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.fragment_photo_detail, container, false);
-        mImageView = (ImageView) view.findViewById(R.id.photo_detail_imageview);
-        mTextView = (TextView) view.findViewById(R.id.photo_detail_textview);
 
+        mTextView = (TextView) view.findViewById(R.id.photo_detail_textview);
+        mImageView = (ImageView) view.findViewById(R.id.photo_detail_imageview);
         mImageView.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -41,13 +38,26 @@ public class PhotoDetailFragment extends Fragment
             }
         });
 
+        mAttacher = new PhotoViewAttacher(mImageView);
+        mAttacher.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
         return view;
     }
 
     public void setPhoto(FhpxPhoto fhpxPhoto)
     {
-        Ion.with(mImageView).load(fhpxPhoto.getUrl());
-        mTextView.setText(fhpxPhoto.getAuthorName());
+        Ion.with(mImageView)
+                .deepZoom()
+                .load(fhpxPhoto.getLargeUrl());
+
+        mTextView.setText("Author - " + fhpxPhoto.getAuthorName());
+        mAttacher.update();
     }
 
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+        mAttacher.cleanup();
+    }
 }

@@ -16,8 +16,8 @@ import me.jitan.fhpxdemo.model.FhpxPhoto;
 
 public class IonClient
 {
-    private final static String FiveHundredPX_PhotoApi_BaseUrl = "https://api.500px.com/v1/photos/";
-    private final static String FiveHundredPX_ConsumerKey =
+    private final static String PhotoApi_BaseUrl = "https://api.500px.com/v1/photos/";
+    private final static String Fhpx_ConsumerKey =
             "&consumer_key=dNRpNAjucR4By3KM9HvFWgb4fa1rNArB6R2nBfv2";
 
     private final Context mContext;
@@ -43,11 +43,12 @@ public class IonClient
         mImageAdapter = imageAdapter;
 
         Ion.with(mContext)
-                .load(FiveHundredPX_PhotoApi_BaseUrl +
+                .load(PhotoApi_BaseUrl +
                         "/search?term=" +
                         searchQuery.trim() +
-                        "&image_size[]=3&image_size[]=1080&rpp=100&sort=highest_rating" +
-                        FiveHundredPX_ConsumerKey)
+                        "&image_size[]=3&image_size[]=1080&image_size[]=2048&rpp=100" +
+                                "&sort=highest_rating" +
+                        Fhpx_ConsumerKey)
                 .asJsonObject()
                 .setCallback(new FutureCallback<JsonObject>()
                 {
@@ -55,20 +56,18 @@ public class IonClient
                     public void onCompleted(Exception e, JsonObject result)
                     {
                         mImageAdapter.clear();
-                        new JsonToFphxImageTask().executeOnExecutor(AsyncTask
-                                .THREAD_POOL_EXECUTOR,result);
+                        new JsonToFphxImageTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                                result);
                     }
                 });
-
     }
 
-    private final class JsonToFphxImageTask extends AsyncTask<JsonObject, FhpxPhoto,
-            Void>
+    private final class JsonToFphxImageTask extends AsyncTask<JsonObject, FhpxPhoto, Void>
     {
         @Override
         protected Void doInBackground(JsonObject... params)
         {
-            String authorName, thumbUrl = "", url = "";
+            String authorName, thumbUrl = "", url = "", largeUrl = "";
             JsonObject userObject, photoObject;
             List<FhpxPhoto> fhpxPhotos = new ArrayList<>();
             JsonArray photos = params[0].getAsJsonArray("photos");
@@ -94,10 +93,12 @@ public class IonClient
                             break;
                         case "1080":
                             url = imageUrlObject.get("url").getAsString();
+                        case "2080":
+                            largeUrl = imageUrlObject.get("url").getAsString();
                     }
                 }
 
-                publishProgress(new FhpxPhoto(thumbUrl, url, authorName));
+                publishProgress(new FhpxPhoto(thumbUrl, url, largeUrl, authorName));
             }
             return null;
         }
