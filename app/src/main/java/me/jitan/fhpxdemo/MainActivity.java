@@ -192,17 +192,23 @@ public class MainActivity extends AppCompatActivity
             {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH)
                 {
-                    mSearchQuery = mSearchField.getText().toString();
-                    Toast.makeText(getApplicationContext(), "Searching for: " + mSearchQuery,
-                            Toast.LENGTH_SHORT).show();
+                    mSearchQuery = mSearchField.getText().toString().trim();
                     hideKeyboard();
 
-                    mGridFragment.loadSearchResults(mSearchQuery);
+                    Toast.makeText(v.getContext(), "Searching for: " + mSearchQuery, Toast
+                            .LENGTH_SHORT).show();
+                    mGridFragment.loadSearchResults(cleanSearchQuery(mSearchQuery));
                     return true;
                 }
                 return false;
             }
         });
+    }
+
+    private String cleanSearchQuery(String searchQuery)
+    {
+        searchQuery = searchQuery.replaceAll("[^a-zA-Z0-9]+", "+").replaceAll("\\+$", "");
+        return searchQuery;
     }
 
 

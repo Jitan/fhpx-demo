@@ -52,6 +52,7 @@ public class PhotoDetailFragment extends Fragment
 
         mTextView.setText("Author - " + fhpxPhoto.getAuthorName());
         mAttacher.update();
+        mAttacher.setScaleType(ImageView.ScaleType.FIT_CENTER);
     }
 
     @Override

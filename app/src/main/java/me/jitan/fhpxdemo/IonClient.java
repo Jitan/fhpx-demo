@@ -42,12 +42,14 @@ public class IonClient
     {
         mImageAdapter = imageAdapter;
 
+
+
         Ion.with(mContext)
                 .load(PhotoApi_BaseUrl +
                         "/search?term=" +
-                        searchQuery.trim() +
+                        searchQuery +
                         "&image_size[]=3&image_size[]=1080&image_size[]=2048&rpp=100" +
-                                "&sort=highest_rating" +
+                        "&sort=highest_rating" +
                         Fhpx_ConsumerKey)
                 .asJsonObject()
                 .setCallback(new FutureCallback<JsonObject>()
