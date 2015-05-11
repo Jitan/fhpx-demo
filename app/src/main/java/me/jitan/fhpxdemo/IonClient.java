@@ -2,6 +2,7 @@ package me.jitan.fhpxdemo;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.widget.Toast;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -12,6 +13,8 @@ import com.koushikdutta.ion.Ion;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
+import me.jitan.fhpxdemo.event.AddPhotoToGridEvent;
 import me.jitan.fhpxdemo.model.FhpxPhoto;
 
 public class IonClient
@@ -41,15 +44,15 @@ public class IonClient
     public void loadSearchResults(String searchQuery, final ImageAdapter imageAdapter)
     {
         mImageAdapter = imageAdapter;
-
-
+        Toast.makeText(mContext, "Searching for: " + searchQuery, Toast
+                .LENGTH_SHORT).show();
 
         Ion.with(mContext)
                 .load(PhotoApi_BaseUrl +
                         "/search?term=" +
                         searchQuery +
                         "&image_size[]=3&image_size[]=1080&image_size[]=2048&rpp=100" +
-                        "&sort=highest_rating" +
+                        "&sort=favorites_count" +
                         Fhpx_ConsumerKey)
                 .asJsonObject()
                 .setCallback(new FutureCallback<JsonObject>()
@@ -69,7 +72,7 @@ public class IonClient
         @Override
         protected Void doInBackground(JsonObject... params)
         {
-            String authorName, thumbUrl = "", url = "", largeUrl = "";
+            String authorName = "", thumbUrl = "", url = "", largeUrl = "";
             JsonObject userObject, photoObject;
             List<FhpxPhoto> fhpxPhotos = new ArrayList<>();
             JsonArray photos = params[0].getAsJsonArray("photos");
@@ -79,8 +82,15 @@ public class IonClient
                 photoObject = photo.getAsJsonObject();
 
                 userObject = photoObject.get("user").getAsJsonObject();
-                authorName = userObject.get("firstname").getAsString();
-                authorName += " " + userObject.get("lastname").getAsString();
+                if (!userObject.get("firstname").isJsonNull())
+                {
+                    authorName = userObject.get("firstname").getAsString();
+                }
+
+                if (!userObject.get("lastname").isJsonNull())
+                {
+                    authorName += " " + userObject.get("lastname").getAsString();
+                }
 
                 JsonArray imageUrls = photoObject.get("images").getAsJsonArray();
                 for (JsonElement imageUrl : imageUrls)
@@ -106,9 +116,9 @@ public class IonClient
         }
 
         @Override
-        protected void onProgressUpdate(FhpxPhoto... params)
+        protected void onProgressUpdate(FhpxPhoto... photos)
         {
-            mImageAdapter.add(params[0]);
+            EventBus.getDefault().post(new AddPhotoToGridEvent(photos[0]));
         }
     }
 }

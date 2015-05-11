@@ -12,6 +12,7 @@ import de.greenrobot.event.EventBus;
 import me.jitan.fhpxdemo.ImageAdapter;
 import me.jitan.fhpxdemo.IonClient;
 import me.jitan.fhpxdemo.R;
+import me.jitan.fhpxdemo.event.AddPhotoToGridEvent;
 import me.jitan.fhpxdemo.event.LoadPhotoDetailEvent;
 import me.jitan.fhpxdemo.model.FhpxPhoto;
 
@@ -27,10 +28,24 @@ public class GridFragment extends Fragment
     {
         super.onCreate(savedInstanceState);
 
+        setRetainInstance(true);
+
         if (mImageAdapter == null)
         {
             mImageAdapter = new ImageAdapter(getActivity());
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
     }
 
     @Override
@@ -58,4 +73,11 @@ public class GridFragment extends Fragment
     {
         IonClient.getInstance(getActivity()).loadSearchResults(mSearchQuery, mImageAdapter);
     }
+
+    public void onEvent(AddPhotoToGridEvent event)
+    {
+        mImageAdapter.add(event.getFhpxPhoto());
+    }
+
+
 }

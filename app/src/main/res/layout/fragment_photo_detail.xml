@@ -10,7 +10,9 @@
         android:layout_height="match_parent"
         android:contentDescription="@string/photo_detail_content_description"
         android:clickable="true"
-        android:scaleType="fitCenter"/>
+        android:scaleType="fitCenter"
+        android:gravity="center"
+        android:background="@android:color/black"/>
 
     <TextView
         android:id="@+id/photo_detail_textview"
