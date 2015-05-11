@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity
     private GridFragment mGridFragment;
     private PhotoDetailFragment mPhotoDetailFragment;
     private FragmentManager mFragmentManager;
-    private String mActiveFragment;
+    private String mLastVisibleFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -59,11 +59,11 @@ public class MainActivity extends AppCompatActivity
 
         if (savedInstanceState == null)
         {
-            mActiveFragment = GRID_FRAGMENT_TAG;
+            mLastVisibleFragment = GRID_FRAGMENT_TAG;
         }
         else
         {
-            mActiveFragment = savedInstanceState.getString(ACTIVE_FRAGMENT_KEY);
+            mLastVisibleFragment = savedInstanceState.getString(ACTIVE_FRAGMENT_KEY);
         }
 
         setupFragments(savedInstanceState);
@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity
                     .commit();
         }
 
-        if (mActiveFragment.equals(GRID_FRAGMENT_TAG))
+        if (mLastVisibleFragment.equals(GRID_FRAGMENT_TAG))
         {
             showGridFragment();
         }
@@ -110,6 +110,24 @@ public class MainActivity extends AppCompatActivity
         {
             showPhotoDetailFragment();
         }
+
+        setFragmentBackstackListener();
+    }
+
+    private void setFragmentBackstackListener()
+    {
+        mFragmentManager.addOnBackStackChangedListener(
+                new FragmentManager.OnBackStackChangedListener()
+                {
+                    @Override
+                    public void onBackStackChanged()
+                    {
+                        if (mGridFragment.isVisible())
+                        {
+                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                        }
+                    }
+                });
     }
 
     private void showGridFragment()
@@ -133,6 +151,8 @@ public class MainActivity extends AppCompatActivity
                 .addToBackStack(null)
                 .commit();
     }
+
+
 
     @Override
     protected void onSaveInstanceState(Bundle outState)
