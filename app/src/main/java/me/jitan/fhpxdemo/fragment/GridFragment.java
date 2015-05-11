@@ -62,7 +62,7 @@ public class GridFragment extends Fragment
                     int position, long id)
             {
                 FhpxPhoto photoForDetailView = mImageAdapter.getItem(position);
-                eventBus.post(new LoadPhotoDetailEvent(photoForDetailView));
+                eventBus.postSticky(new LoadPhotoDetailEvent(photoForDetailView));
             }
         });
 
