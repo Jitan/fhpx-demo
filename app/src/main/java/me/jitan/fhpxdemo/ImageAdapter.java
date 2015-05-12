@@ -3,6 +3,7 @@ package me.jitan.fhpxdemo;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,15 +43,19 @@ public class ImageAdapter extends ArrayAdapter<FhpxPhoto>
         }
         mImageView = (ImageView) convertView.findViewById(R.id.grid_item_image);
 
-
+        Log.d("ImageAdapter", "---------");
+        Log.d("ImageAdapter", "Loading thumb nr: " + position);
         if (fhpxPhoto.getThumb() == null)
         {
+            Log.d("ImageAdapter", "FROM INTERNET");
             loadThumb(fhpxPhoto);
         }
         else
         {
             mImageView.setImageDrawable(fhpxPhoto.getThumb());
+            Log.d("ImageAdapter", "FROM MEMORY");
         }
+        Log.d("ImageAdapter", "---------");
 
         return convertView;
     }
@@ -92,6 +97,8 @@ public class ImageAdapter extends ArrayAdapter<FhpxPhoto>
     public void add(FhpxPhoto fhpxPhoto)
     {
         super.add(fhpxPhoto);
-        preloadThumb(fhpxPhoto);
+//        preloadThumb(fhpxPhoto);
     }
+
+
 }

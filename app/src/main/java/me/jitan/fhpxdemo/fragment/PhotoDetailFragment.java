@@ -78,9 +78,8 @@ public class PhotoDetailFragment extends Fragment
         mProgressBar.setVisibility(View.VISIBLE);
         mAttacher = new PhotoViewAttacher(mImageView);
 
-
         Glide.with(this)
-                .load(fhpxPhoto.getLargeUrl())
+                .load(fhpxPhoto.getUrl())
                 .placeholder(fhpxPhoto.getThumb())
                 .into(new GlideDrawableImageViewTarget(mImageView)
                 {

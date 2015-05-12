@@ -6,4 +6,7 @@
     <string name="search_title">Search</string>
     <string name="toolbar_search_hint">Search</string>
     <string name="photo_detail_content_description">Large photo</string>
+    <string name="action_sort_score">Sort by score</string>
+    <string name="action_sort_date">Sort by date</string>
+    <string name="action_sort_favorites">Sort by favorites</string>
 </resources>

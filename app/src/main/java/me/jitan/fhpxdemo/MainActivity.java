@@ -10,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,11 +18,13 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.koushikdutta.ion.Ion;
 
 import de.greenrobot.event.EventBus;
 import me.jitan.fhpxdemo.event.LoadPhotoDetailEvent;
+import me.jitan.fhpxdemo.event.SearchEvent;
 import me.jitan.fhpxdemo.fragment.GridFragment;
 import me.jitan.fhpxdemo.fragment.PhotoDetailFragment;
 
@@ -37,12 +38,14 @@ public class MainActivity extends AppCompatActivity
     private Boolean mSearchOpened;
     private String mSearchQuery;
     private EditText mSearchField;
+    private String mSortOptions;
     private ActionBar mActionBar;
     private Drawable mIconCloseSearch, mIconOpenSearch;
     private GridFragment mGridFragment;
     private PhotoDetailFragment mPhotoDetailFragment;
     private FragmentManager mFragmentManager;
     private String mLastVisibleFragment;
+    private IonClient mIonClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -50,32 +53,32 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Ion.getDefault(this).configure().setLogging("fhpx-ion", Log.DEBUG);
+        mIonClient = IonClient.getInstance(this);
+//        Ion.getDefault(this).configure().setLogging("fhpx-ion", Log.DEBUG);
 
         // Need to disable Spdy to access 500px API with Ion, otherwise we get weird errors.
         Ion.getDefault(this).getHttpClient().getSSLSocketMiddleware().setSpdyEnabled(false);
 
         setupToolbar();
 
-        if (savedInstanceState == null)
-        {
-            mLastVisibleFragment = GRID_FRAGMENT_TAG;
-        }
-        else
+        if (savedInstanceState != null)
         {
             mLastVisibleFragment = savedInstanceState.getString(ACTIVE_FRAGMENT_KEY);
         }
+
         setupFragments(savedInstanceState);
     }
 
     @Override
-    public void onStart() {
+    public void onStart()
+    {
         super.onStart();
         EventBus.getDefault().register(this);
     }
 
     @Override
-    public void onStop() {
+    public void onStop()
+    {
         EventBus.getDefault().unregister(this);
         super.onStop();
     }
@@ -101,7 +104,7 @@ public class MainActivity extends AppCompatActivity
                     .commit();
         }
 
-        if (mLastVisibleFragment.equals(GRID_FRAGMENT_TAG))
+        if (mLastVisibleFragment == null || mLastVisibleFragment.equals(GRID_FRAGMENT_TAG))
         {
             showGridFragment();
         }
@@ -153,7 +156,6 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
     @Override
     protected void onSaveInstanceState(Bundle outState)
     {
@@ -166,6 +168,18 @@ public class MainActivity extends AppCompatActivity
             outState.putString(ACTIVE_FRAGMENT_KEY, PHOTO_DETAIL_FRAGMENT_TAG);
         }
         super.onSaveInstanceState(outState);
+    }
+
+    private void loadSearchResults()
+    {
+        hideKeyboard();
+        mSearchQuery = mSearchField.getText().toString().trim();
+
+        if (!mSearchQuery.isEmpty())
+        {
+            EventBus.getDefault().post(
+                    new SearchEvent(cleanSearchQuery(mSearchQuery), mSortOptions));
+        }
     }
 
     public void onEventMainThread(LoadPhotoDetailEvent event)
@@ -197,25 +211,44 @@ public class MainActivity extends AppCompatActivity
     {
         switch (item.getItemId())
         {
-            case R.id.action_settings:
+            case R.id.action_search:
+                toggleSearchFieldView();
                 return true;
 
-            case R.id.action_search:
-                if (mSearchOpened)
-                {
-                    closeSearchBar();
-                    hideKeyboard();
-                }
-                else
-                {
-                    openSearchBar(mSearchQuery);
-                    showKeyboard();
-                }
+            case R.id.action_sort_score:
+                Toast.makeText(this, "Sort on score", Toast.LENGTH_SHORT).show();
+                mSortOptions = "_score";
+                loadSearchResults();
+                return true;
+
+            case R.id.action_sort_date:
+                Toast.makeText(this, "Sort on date", Toast.LENGTH_SHORT).show();
+                mSortOptions = "created_at";
+                loadSearchResults();
+                return true;
+
+            case R.id.action_sort_favorites:
+                Toast.makeText(this, "Sort on favorites", Toast.LENGTH_SHORT).show();
+                mSortOptions = "rating";
+                loadSearchResults();
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    private void toggleSearchFieldView()
+    {
+        if (mSearchOpened)
+        {
+            closeSearchBar();
+            hideKeyboard();
+        }
+        else
+        {
+            openSearchBar(mSearchQuery);
+            showKeyboard();
+        }
+    }
 
     private void closeSearchBar()
     {
@@ -246,51 +279,11 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void hideKeyboard()
-    {
-        View view = getCurrentFocus();
-        if (view != null)
-        {
-            InputMethodManager manager = (InputMethodManager) getSystemService(
-                    Context.INPUT_METHOD_SERVICE);
-            manager.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        }
-    }
-
-    private void showKeyboard()
-    {
-        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(
-                Context.INPUT_METHOD_SERVICE);
-        // only will trigger it if no physical keyboard is open
-        inputMethodManager.showSoftInput(mSearchField, InputMethodManager.SHOW_IMPLICIT);
-    }
-
-    private void setKeyboardSearchListener()
-    {
-        mSearchField.setOnEditorActionListener(new TextView.OnEditorActionListener()
-        {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event)
-            {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH)
-                {
-                    mSearchQuery = mSearchField.getText().toString().trim();
-                    hideKeyboard();
-
-                    mGridFragment.loadSearchResults(cleanSearchQuery(mSearchQuery));
-                    return true;
-                }
-                return false;
-            }
-        });
-    }
-
     private String cleanSearchQuery(String searchQuery)
     {
         searchQuery = searchQuery.replaceAll("[^a-zA-Z0-9]+", "+").replaceAll("\\+$", "");
         return searchQuery;
     }
-
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu)
@@ -328,6 +321,38 @@ public class MainActivity extends AppCompatActivity
             mSearchQuery = mSearchField.getText().toString();
         }
 
+    }
+
+    public void hideKeyboard()
+    {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(mSearchField.getWindowToken(), 0);
+    }
+
+    private void showKeyboard()
+    {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        // only will trigger it if no physical keyboard is open
+        inputMethodManager.showSoftInput(mSearchField, InputMethodManager.SHOW_IMPLICIT);
+    }
+
+    private void setKeyboardSearchListener()
+    {
+        mSearchField.setOnEditorActionListener(new TextView.OnEditorActionListener()
+        {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event)
+            {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH)
+                {
+                    loadSearchResults();
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     @Override

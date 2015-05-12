@@ -10,10 +10,10 @@ import android.widget.GridView;
 
 import de.greenrobot.event.EventBus;
 import me.jitan.fhpxdemo.ImageAdapter;
-import me.jitan.fhpxdemo.IonClient;
 import me.jitan.fhpxdemo.R;
 import me.jitan.fhpxdemo.event.AddPhotoToGridEvent;
 import me.jitan.fhpxdemo.event.LoadPhotoDetailEvent;
+import me.jitan.fhpxdemo.event.SearchEvent;
 import me.jitan.fhpxdemo.model.FhpxPhoto;
 
 public class GridFragment extends Fragment
@@ -29,23 +29,7 @@ public class GridFragment extends Fragment
         super.onCreate(savedInstanceState);
 
         setRetainInstance(true);
-
-        if (mImageAdapter == null)
-        {
-            mImageAdapter = new ImageAdapter(this);
-        }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        EventBus.getDefault().unregister(this);
-        super.onStop();
+        mImageAdapter = new ImageAdapter(this);
     }
 
     @Override
@@ -69,14 +53,28 @@ public class GridFragment extends Fragment
         return view;
     }
 
-    public void loadSearchResults(String mSearchQuery)
-    {
-        IonClient.getInstance(getActivity()).loadSearchResults(mSearchQuery, mImageAdapter);
-    }
-
     public void onEventMainThread(AddPhotoToGridEvent event)
     {
         mImageAdapter.add(event.getFhpxPhoto());
+    }
+
+    public void onEventMainThread(SearchEvent event)
+    {
+        mImageAdapter.clear();
+    }
+
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop()
+    {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
     }
 
 

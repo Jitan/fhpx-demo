@@ -12,6 +12,7 @@ import com.koushikdutta.ion.Ion;
 
 import de.greenrobot.event.EventBus;
 import me.jitan.fhpxdemo.event.AddPhotoToGridEvent;
+import me.jitan.fhpxdemo.event.SearchEvent;
 import me.jitan.fhpxdemo.model.FhpxPhoto;
 
 public class IonClient
@@ -22,11 +23,11 @@ public class IonClient
 
     private final Context mContext;
     private static IonClient mInstance;
-    private ImageAdapter mImageAdapter;
 
     private IonClient(Context context)
     {
         mContext = context.getApplicationContext();
+        EventBus.getDefault().register(this);
     }
 
     public static IonClient getInstance(Context context)
@@ -38,18 +39,18 @@ public class IonClient
         return mInstance;
     }
 
-    public void loadSearchResults(String searchQuery, final ImageAdapter imageAdapter)
+    public void onEvent(SearchEvent event)
     {
-        mImageAdapter = imageAdapter;
-        Toast.makeText(mContext, "Searching for: " + searchQuery, Toast
+        Toast.makeText(mContext, "Searching for: " + event.getSearchQuery(), Toast
                 .LENGTH_SHORT).show();
 
         Ion.with(mContext)
                 .load(PhotoApi_BaseUrl +
                         "/search?term=" +
-                        searchQuery +
+                        event.getSearchQuery() +
+                        "&sort=" +
+                        event.getSortOptions() +
                         "&image_size[]=3&image_size[]=1080&image_size[]=2048&rpp=100" +
-                        "&sort=favorites_count" +
                         Fhpx_ConsumerKey)
                 .asJsonObject()
                 .setCallback(new FutureCallback<JsonObject>()
@@ -57,11 +58,14 @@ public class IonClient
                     @Override
                     public void onCompleted(Exception e, JsonObject result)
                     {
-                        mImageAdapter.clear();
                         new JsonToFphxImageTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
                                 result);
                     }
                 });
+
+    }
+    public void loadSearchResults(String searchQuery, String searchOptions)
+    {
     }
 
     private final class JsonToFphxImageTask extends AsyncTask<JsonObject, FhpxPhoto, Void>

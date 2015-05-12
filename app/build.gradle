@@ -27,4 +27,5 @@ dependencies {
     compile 'com.github.chrisbanes.photoview:library:1.2.2'
     compile 'com.github.bumptech.glide:glide:3.6.0'
     compile 'com.android.support:support-v4:22.1.1'
+    compile 'org.lucasr.smoothie:smoothie:0.1.0'
 }
