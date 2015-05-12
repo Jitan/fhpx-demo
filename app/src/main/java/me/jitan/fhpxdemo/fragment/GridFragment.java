@@ -32,7 +32,7 @@ public class GridFragment extends Fragment
 
         if (mImageAdapter == null)
         {
-            mImageAdapter = new ImageAdapter(getActivity());
+            mImageAdapter = new ImageAdapter(this);
         }
     }
 

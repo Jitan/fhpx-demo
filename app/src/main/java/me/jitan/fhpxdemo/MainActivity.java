@@ -31,8 +31,8 @@ import me.jitan.fhpxdemo.fragment.PhotoDetailFragment;
 public class MainActivity extends AppCompatActivity
 {
     private static final String ACTIVE_FRAGMENT_KEY = "active_fragment_key";
-    private final String PHOTO_DETAIL_FRAGMENT_TAG = "photo_detail_fragment";
-    private final String GRID_FRAGMENT_TAG = "grid_fragment";
+    public final static String PHOTO_DETAIL_FRAGMENT_TAG = "photo_detail_fragment";
+    public final static String GRID_FRAGMENT_TAG = "grid_fragment";
     private MenuItem mSearchAction;
     private Boolean mSearchOpened;
     private String mSearchQuery;

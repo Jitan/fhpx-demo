@@ -10,9 +10,6 @@ import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.greenrobot.event.EventBus;
 import me.jitan.fhpxdemo.event.AddPhotoToGridEvent;
 import me.jitan.fhpxdemo.model.FhpxPhoto;
@@ -74,7 +71,6 @@ public class IonClient
         {
             String authorName = "", thumbUrl = "", url = "", largeUrl = "";
             JsonObject userObject, photoObject;
-            List<FhpxPhoto> fhpxPhotos = new ArrayList<>();
             JsonArray photos = params[0].getAsJsonArray("photos");
 
             for (JsonElement photo : photos)
