@@ -11,6 +11,7 @@ import android.widget.GridView;
 import de.greenrobot.event.EventBus;
 import me.jitan.fhpxdemo.ImageAdapter;
 import me.jitan.fhpxdemo.R;
+import me.jitan.fhpxdemo.event.AddPhotoSetToGridEvent;
 import me.jitan.fhpxdemo.event.AddPhotoToGridEvent;
 import me.jitan.fhpxdemo.event.LoadPhotoDetailEvent;
 import me.jitan.fhpxdemo.event.SearchEvent;
@@ -61,6 +62,11 @@ public class GridFragment extends Fragment
     public void onEventMainThread(SearchEvent event)
     {
         mImageAdapter.clear();
+    }
+
+    public void onEventMainThread(AddPhotoSetToGridEvent event)
+    {
+        mImageAdapter.addAll(event.getFhpxPhotoList());
     }
 
     @Override

@@ -10,8 +10,10 @@ import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 
+import java.util.ArrayList;
+
 import de.greenrobot.event.EventBus;
-import me.jitan.fhpxdemo.event.AddPhotoToGridEvent;
+import me.jitan.fhpxdemo.event.AddPhotoSetToGridEvent;
 import me.jitan.fhpxdemo.event.SearchEvent;
 import me.jitan.fhpxdemo.model.FhpxPhoto;
 
@@ -68,11 +70,14 @@ public class IonClient
     {
     }
 
-    private final class JsonToFphxImageTask extends AsyncTask<JsonObject, FhpxPhoto, Void>
+    private final class JsonToFphxImageTask extends AsyncTask<JsonObject, FhpxPhoto,
+            ArrayList<FhpxPhoto>>
     {
         @Override
-        protected Void doInBackground(JsonObject... params)
+        protected ArrayList<FhpxPhoto> doInBackground(JsonObject... params)
         {
+            ArrayList<FhpxPhoto> fhpxPhotoSet = new ArrayList<>();
+
             String authorName = "", thumbUrl = "", url = "", largeUrl = "";
             JsonObject userObject, photoObject;
             JsonArray photos = params[0].getAsJsonArray("photos");
@@ -110,15 +115,21 @@ public class IonClient
                     }
                 }
 
-                publishProgress(new FhpxPhoto(thumbUrl, url, largeUrl, authorName));
+                fhpxPhotoSet.add(new FhpxPhoto(thumbUrl, url, largeUrl, authorName));
             }
-            return null;
+            return fhpxPhotoSet;
         }
 
         @Override
         protected void onProgressUpdate(FhpxPhoto... photos)
         {
-            EventBus.getDefault().post(new AddPhotoToGridEvent(photos[0]));
+//            EventBus.getDefault().post(new AddPhotoToGridEvent(photos[0]));
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<FhpxPhoto> fhpxPhotoSet)
+        {
+            EventBus.getDefault().post(new AddPhotoSetToGridEvent(fhpxPhotoSet));
         }
     }
 }

@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -54,7 +55,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         mIonClient = IonClient.getInstance(this);
-//        Ion.getDefault(this).configure().setLogging("fhpx-ion", Log.DEBUG);
+        Ion.getDefault(this).configure().setLogging("fhpx-ion", Log.DEBUG);
 
         // Need to disable Spdy to access 500px API with Ion, otherwise we get weird errors.
         Ion.getDefault(this).getHttpClient().getSSLSocketMiddleware().setSpdyEnabled(false);
@@ -229,7 +230,7 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.action_sort_favorites:
                 Toast.makeText(this, "Sort on favorites", Toast.LENGTH_SHORT).show();
-                mSortOptions = "rating";
+                mSortOptions = "favorites_count";
                 loadSearchResults();
                 return true;
         }
