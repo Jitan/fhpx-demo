@@ -1,8 +1,11 @@
 package me.jitan.fhpxdemo.model;
 
+import android.graphics.drawable.Drawable;
+
 public class FhpxPhoto
 {
     private final String thumbUrl, url, largeUrl, authorName;
+    private Drawable thumb;
 
     public FhpxPhoto(String thumbUrl, String url, String largeUrl, String authorName)
     {
@@ -30,5 +33,15 @@ public class FhpxPhoto
     public String getLargeUrl()
     {
         return largeUrl;
+    }
+
+    public Drawable getThumb()
+    {
+        return thumb;
+    }
+
+    public void setThumb(Drawable thumb)
+    {
+        this.thumb = thumb;
     }
 }

@@ -1,5 +1,6 @@
 package me.jitan.fhpxdemo.fragment;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -9,8 +10,10 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 
 import de.greenrobot.event.EventBus;
 import me.jitan.fhpxdemo.R;
@@ -24,6 +27,7 @@ public class PhotoDetailFragment extends Fragment
     private TextView mTextView;
     private PhotoViewAttacher mAttacher;
     private ProgressBar mProgressBar;
+    private Drawable mPhoto;
 
 
     @Override
@@ -37,7 +41,7 @@ public class PhotoDetailFragment extends Fragment
     public void onStart()
     {
         super.onStart();
-        EventBus.getDefault().registerSticky(this);
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -57,6 +61,12 @@ public class PhotoDetailFragment extends Fragment
         mImageView = (ImageView) view.findViewById(R.id.photo_detail_imageview);
         mProgressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
 
+        if (mPhoto != null)
+        {
+            mImageView.setImageDrawable(mPhoto);
+            mAttacher = new PhotoViewAttacher(mImageView);
+            mAttacher.update();
+        }
 
         return view;
     }
@@ -64,15 +74,19 @@ public class PhotoDetailFragment extends Fragment
     public void setPhoto(FhpxPhoto fhpxPhoto)
     {
         mProgressBar.setVisibility(View.VISIBLE);
+        mAttacher = new PhotoViewAttacher(mImageView);
 
-        Ion.with(mImageView)
-                .load(fhpxPhoto.getUrl())
-                .setCallback(new FutureCallback<ImageView>()
+        Glide.with(this)
+                .load(fhpxPhoto.getLargeUrl())
+                .placeholder(fhpxPhoto.getThumb())
+                .into(new GlideDrawableImageViewTarget(mImageView)
                 {
                     @Override
-                    public void onCompleted(Exception e, ImageView result)
+                    public void onResourceReady(GlideDrawable resource,
+                            GlideAnimation<? super GlideDrawable> animation)
                     {
-                        mAttacher = new PhotoViewAttacher(mImageView);
+                        super.onResourceReady(resource, animation);
+                        mPhoto = resource;
                         mAttacher.update();
                         mProgressBar.setVisibility(View.INVISIBLE);
                     }

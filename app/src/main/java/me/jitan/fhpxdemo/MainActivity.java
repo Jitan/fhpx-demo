@@ -65,7 +65,6 @@ public class MainActivity extends AppCompatActivity
         {
             mLastVisibleFragment = savedInstanceState.getString(ACTIVE_FRAGMENT_KEY);
         }
-
         setupFragments(savedInstanceState);
     }
 
@@ -168,7 +167,7 @@ public class MainActivity extends AppCompatActivity
         super.onSaveInstanceState(outState);
     }
 
-    public void onEvent(LoadPhotoDetailEvent event)
+    public void onEventMainThread(LoadPhotoDetailEvent event)
     {
         showPhotoDetailFragment();
     }
