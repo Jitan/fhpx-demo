@@ -1,5 +1,7 @@
 package me.jitan.fhpxdemo;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +13,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
+import com.bumptech.glide.request.target.SimpleTarget;
 
 import me.jitan.fhpxdemo.model.FhpxPhoto;
 
@@ -25,6 +28,7 @@ public class ImageAdapter extends ArrayAdapter<FhpxPhoto>
         super(fragment.getActivity(), 0);
         mInflater = LayoutInflater.from((fragment.getActivity()));
         mFragment = fragment;
+//        new GlideBuilder(fragment.getActivity()).setBitmapPool(new LruBitmapPool());
     }
 
     @Override
@@ -68,4 +72,26 @@ public class ImageAdapter extends ArrayAdapter<FhpxPhoto>
                 });
     }
 
+    private void preloadThumb(final FhpxPhoto fhpxPhoto)
+    {
+        Glide.with(mFragment)
+                .load(fhpxPhoto.getThumbUrl())
+                .asBitmap()
+                .into(new SimpleTarget<Bitmap>(280, 280)
+                {
+                    @Override
+                    public void onResourceReady(Bitmap resource,
+                            GlideAnimation<? super Bitmap> glideAnimation)
+                    {
+                        fhpxPhoto.setThumb(new BitmapDrawable(mFragment.getResources(), resource));
+                    }
+                });
+    }
+
+    @Override
+    public void add(FhpxPhoto fhpxPhoto)
+    {
+        super.add(fhpxPhoto);
+        preloadThumb(fhpxPhoto);
+    }
 }
