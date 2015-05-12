@@ -8,11 +8,8 @@
         android:id="@+id/photo_detail_imageview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:contentDescription="@string/photo_detail_content_description"
-        android:clickable="true"
-        android:scaleType="fitCenter"
-        android:gravity="center"
-        android:background="@android:color/black"/>
+        android:background="@android:color/black"
+        android:contentDescription="@string/photo_detail_content_description"/>
 
     <TextView
         android:id="@+id/photo_detail_textview"
@@ -25,4 +22,12 @@
         android:paddingRight="10dp"
         android:paddingTop="15dp"
         android:textColor="@android:color/white"/>
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleSmallInverse"
+        android:id="@+id/progress_bar"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:indeterminate="true"
+        android:layout_gravity="center"/>
 </FrameLayout>

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.koushikdutta.async.future.FutureCallback;
@@ -22,6 +23,7 @@ public class PhotoDetailFragment extends Fragment
     private ImageView mImageView;
     private TextView mTextView;
     private PhotoViewAttacher mAttacher;
+    private ProgressBar mProgressBar;
 
 
     @Override
@@ -53,12 +55,16 @@ public class PhotoDetailFragment extends Fragment
 
         mTextView = (TextView) view.findViewById(R.id.photo_detail_textview);
         mImageView = (ImageView) view.findViewById(R.id.photo_detail_imageview);
+        mProgressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
+
 
         return view;
     }
 
     public void setPhoto(FhpxPhoto fhpxPhoto)
     {
+        mProgressBar.setVisibility(View.VISIBLE);
+
         Ion.with(mImageView)
                 .load(fhpxPhoto.getUrl())
                 .setCallback(new FutureCallback<ImageView>()
@@ -68,6 +74,7 @@ public class PhotoDetailFragment extends Fragment
                     {
                         mAttacher = new PhotoViewAttacher(mImageView);
                         mAttacher.update();
+                        mProgressBar.setVisibility(View.INVISIBLE);
                     }
                 });
         mTextView.setText("Author - " + fhpxPhoto.getAuthorName());

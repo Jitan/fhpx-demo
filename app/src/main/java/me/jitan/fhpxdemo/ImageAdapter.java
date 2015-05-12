@@ -32,7 +32,7 @@ public class ImageAdapter extends ArrayAdapter<FhpxPhoto>
         }
 
         final ImageView imageView = (ImageView) convertView.findViewById(R.id.image);
-        
+
         Glide.with(mFragment)
                 .load(getItem(position).getThumbUrl())
                 .crossFade()
