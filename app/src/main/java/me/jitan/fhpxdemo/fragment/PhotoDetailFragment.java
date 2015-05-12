@@ -28,6 +28,7 @@ public class PhotoDetailFragment extends Fragment
     private PhotoViewAttacher mAttacher;
     private ProgressBar mProgressBar;
     private Drawable mPhoto;
+    private String mAuthor;
 
 
     @Override
@@ -61,9 +62,10 @@ public class PhotoDetailFragment extends Fragment
         mImageView = (ImageView) view.findViewById(R.id.photo_detail_imageview);
         mProgressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
 
-        if (mPhoto != null)
+        if (mPhoto != null && mAuthor != null)
         {
             mImageView.setImageDrawable(mPhoto);
+            mTextView.setText("Author - " + mAuthor);
             mAttacher = new PhotoViewAttacher(mImageView);
             mAttacher.update();
         }
@@ -71,10 +73,11 @@ public class PhotoDetailFragment extends Fragment
         return view;
     }
 
-    public void setPhoto(FhpxPhoto fhpxPhoto)
+    public void setPhoto(final FhpxPhoto fhpxPhoto)
     {
         mProgressBar.setVisibility(View.VISIBLE);
         mAttacher = new PhotoViewAttacher(mImageView);
+
 
         Glide.with(this)
                 .load(fhpxPhoto.getLargeUrl())
@@ -87,11 +90,13 @@ public class PhotoDetailFragment extends Fragment
                     {
                         super.onResourceReady(resource, animation);
                         mPhoto = resource;
+
                         mAttacher.update();
                         mProgressBar.setVisibility(View.INVISIBLE);
                     }
                 });
-        mTextView.setText("Author - " + fhpxPhoto.getAuthorName());
+        mAuthor = fhpxPhoto.getAuthorName();
+        mTextView.setText("Author - " + mAuthor);
     }
 
     public void onEventMainThread(LoadPhotoDetailEvent event)

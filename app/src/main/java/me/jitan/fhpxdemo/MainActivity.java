@@ -123,6 +123,7 @@ public class MainActivity extends AppCompatActivity
                     {
                         if (mGridFragment.isVisible())
                         {
+                            mActionBar.show();
                             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                         }
                     }

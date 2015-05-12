@@ -18,6 +18,7 @@ public class ImageAdapter extends ArrayAdapter<FhpxPhoto>
 {
     private LayoutInflater mInflater;
     private Fragment mFragment;
+    private ImageView mImageView;
 
     public ImageAdapter(Fragment fragment)
     {
@@ -35,13 +36,28 @@ public class ImageAdapter extends ArrayAdapter<FhpxPhoto>
         {
             convertView = mInflater.inflate(R.layout.grid_item, parent, false);
         }
+        mImageView = (ImageView) convertView.findViewById(R.id.grid_item_image);
 
-        final ImageView imageView = (ImageView) convertView.findViewById(R.id.grid_item_image);
 
+        if (fhpxPhoto.getThumb() == null)
+        {
+            loadThumb(fhpxPhoto);
+        }
+        else
+        {
+            mImageView.setImageDrawable(fhpxPhoto.getThumb());
+        }
+
+        return convertView;
+    }
+
+    private void loadThumb(final FhpxPhoto fhpxPhoto)
+    {
         Glide.with(mFragment)
                 .load(fhpxPhoto.getThumbUrl())
                 .crossFade()
-                .into(new GlideDrawableImageViewTarget(imageView){
+                .into(new GlideDrawableImageViewTarget(mImageView)
+                {
                     @Override
                     public void onResourceReady(GlideDrawable resource,
                             GlideAnimation<? super GlideDrawable> animation)
@@ -50,8 +66,6 @@ public class ImageAdapter extends ArrayAdapter<FhpxPhoto>
                         super.onResourceReady(resource, animation);
                     }
                 });
-
-        return convertView;
     }
 
 }
