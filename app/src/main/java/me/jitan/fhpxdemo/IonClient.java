@@ -29,7 +29,6 @@ public class IonClient
     private IonClient(Context context)
     {
         mContext = context.getApplicationContext();
-        EventBus.getDefault().register(this);
     }
 
     public static IonClient getInstance(Context context)
@@ -41,17 +40,20 @@ public class IonClient
         return mInstance;
     }
 
-    public void onEvent(SearchEvent event)
+    public void doSearch(SearchEvent event)
     {
         Toast.makeText(mContext, "Searching for: " + event.getSearchQuery(), Toast
                 .LENGTH_SHORT).show();
+
+        String sortOptions = (event.getSortOption() == null) ?
+                "highest_rating" : event.getSortOption();
 
         Ion.with(mContext)
                 .load(PhotoApi_BaseUrl +
                         "/search?term=" +
                         event.getSearchQuery() +
                         "&sort=" +
-                        event.getSortOptions() +
+                        sortOptions +
                         "&image_size[]=3&image_size[]=1080&image_size[]=2048&rpp=100" +
                         Fhpx_ConsumerKey)
                 .asJsonObject()

@@ -54,7 +54,6 @@ public class FragmentHelper
         {
             showPhotoDetailFragment();
         }
-
         setFragmentBackstackListener();
     }
 

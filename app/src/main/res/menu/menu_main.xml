@@ -9,9 +9,9 @@
           android:orderInCategory="100"
           app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/action_sort_score"
+        android:id="@+id/action_sort_rating"
         android:orderInCategory="1"
-        android:title="@string/action_sort_score"
+        android:title="@string/action_sort_rating"
         android:icon="@drawable/ic_checked"
         app:showAsAction="never"/>
     <item

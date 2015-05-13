@@ -2,12 +2,12 @@ package me.jitan.fhpxdemo.event;
 
 public class SearchEvent
 {
-    private final String mSearchQuery, mSortOptions;
+    private final String mSearchQuery, mSortOption;
 
-    public SearchEvent(String searchQuery, String sortOptions)
+    public SearchEvent(String searchQuery, String sortOption)
     {
         this.mSearchQuery = searchQuery;
-        this.mSortOptions = sortOptions;
+        this.mSortOption = sortOption;
     }
 
     public String getSearchQuery()
@@ -15,8 +15,8 @@ public class SearchEvent
         return mSearchQuery;
     }
 
-    public String getSortOptions()
+    public String getSortOption()
     {
-        return mSortOptions;
+        return mSortOption;
     }
 }

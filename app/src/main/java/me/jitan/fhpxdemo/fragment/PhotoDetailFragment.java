@@ -106,12 +106,11 @@ public class PhotoDetailFragment extends Fragment
     public void onDestroy()
     {
         super.onDestroy();
-        mAttacher.cleanup();
     }
 
     @Override public void onDestroyView()
     {
-        super.onDestroyView();
         ButterKnife.reset(this);
+        super.onDestroyView();
     }
 }

@@ -43,9 +43,7 @@ public class ImageAdapter extends ArrayAdapter<FhpxPhoto>
             convertView.setTag(mHolder);
         }
 
-
         loadThumb(position);
-
         return convertView;
     }
 
