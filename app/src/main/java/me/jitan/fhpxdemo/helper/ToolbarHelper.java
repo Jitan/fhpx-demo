@@ -68,7 +68,7 @@ public class ToolbarHelper
 
             case R.id.action_sort_rating:
                 Toast.makeText(mActivity, "Sort on rating", Toast.LENGTH_SHORT).show();
-                mSortOptions = "_score";
+                mSortOptions = "rating";
                 loadSearchResults();
                 return true;
 

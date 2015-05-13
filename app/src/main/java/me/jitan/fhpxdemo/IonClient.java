@@ -62,7 +62,14 @@ public class IonClient
                     @Override
                     public void onCompleted(Exception e, JsonObject result)
                     {
-                        new JsonToFphxImageTask().execute(result);
+                        if (e == null)
+                        {
+                            new JsonToFphxImageTask().execute(result);
+                        }
+                        else
+                        {
+                            Toast.makeText(mContext, "Connection error", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
     }

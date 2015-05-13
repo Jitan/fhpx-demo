@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -76,6 +77,15 @@ public class PhotoDetailFragment extends Fragment
                         mPhoto = resource;
 
                         mAttacher.update();
+                        mProgressBar.setVisibility(View.INVISIBLE);
+                    }
+
+                    @Override public void onLoadFailed(Exception e, Drawable errorDrawable)
+                    {
+                        super.onLoadFailed(e, errorDrawable);
+                        Toast.makeText(getActivity(), "Connection error, unable to load image",
+                                Toast.LENGTH_SHORT)
+                                .show();
                         mProgressBar.setVisibility(View.INVISIBLE);
                     }
                 });
