@@ -25,7 +25,7 @@
 
     <ProgressBar
         style="?android:attr/progressBarStyleSmallInverse"
-        android:id="@+id/progress_bar"
+        android:id="@+id/photo_detail_progress_bar"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:indeterminate="true"

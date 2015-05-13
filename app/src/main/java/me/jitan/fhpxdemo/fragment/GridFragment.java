@@ -5,9 +5,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.GridView;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnItemClick;
 import de.greenrobot.event.EventBus;
 import me.jitan.fhpxdemo.ImageAdapter;
 import me.jitan.fhpxdemo.R;
@@ -15,13 +17,12 @@ import me.jitan.fhpxdemo.event.AddPhotoSetToGridEvent;
 import me.jitan.fhpxdemo.event.AddPhotoToGridEvent;
 import me.jitan.fhpxdemo.event.LoadPhotoDetailEvent;
 import me.jitan.fhpxdemo.event.SearchEvent;
-import me.jitan.fhpxdemo.model.FhpxPhoto;
 
 public class GridFragment extends Fragment
 {
     private ImageAdapter mImageAdapter;
-    private GridView mGridView;
     private static final EventBus eventBus = EventBus.getDefault();
+    @InjectView(R.id.gridview) GridView mGridView;
 
 
     @Override
@@ -38,21 +39,17 @@ public class GridFragment extends Fragment
             Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.fragment_grid, container, false);
-        mGridView = (GridView) view.findViewById(R.id.gridview);
+        ButterKnife.inject(this, view);
         mGridView.setAdapter(mImageAdapter);
-
-        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
-            public void onItemClick(AdapterView<?> parent, View v,
-                    int position, long id)
-            {
-                FhpxPhoto photoForDetailView = mImageAdapter.getItem(position);
-                eventBus.post(new LoadPhotoDetailEvent(photoForDetailView));
-            }
-        });
-
         return view;
     }
+
+    @OnItemClick(R.id.gridview)
+    public void loadPhotoDetailView(int position)
+    {
+        eventBus.post(new LoadPhotoDetailEvent(mImageAdapter.getItem(position)));
+    }
+
 
     public void onEventMainThread(AddPhotoToGridEvent event)
     {
@@ -83,5 +80,10 @@ public class GridFragment extends Fragment
         super.onStop();
     }
 
+    @Override public void onDestroyView()
+    {
+        super.onDestroyView();
+        ButterKnife.reset(this);
+    }
 
 }

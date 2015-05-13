@@ -60,17 +60,12 @@ public class IonClient
                     @Override
                     public void onCompleted(Exception e, JsonObject result)
                     {
-                        new JsonToFphxImageTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                                result);
+                        new JsonToFphxImageTask().execute(result);
                     }
                 });
-
-    }
-    public void loadSearchResults(String searchQuery, String searchOptions)
-    {
     }
 
-    private final class JsonToFphxImageTask extends AsyncTask<JsonObject, FhpxPhoto,
+    private static final class JsonToFphxImageTask extends AsyncTask<JsonObject, FhpxPhoto,
             ArrayList<FhpxPhoto>>
     {
         @Override
@@ -118,12 +113,6 @@ public class IonClient
                 fhpxPhotoSet.add(new FhpxPhoto(thumbUrl, url, largeUrl, authorName));
             }
             return fhpxPhotoSet;
-        }
-
-        @Override
-        protected void onProgressUpdate(FhpxPhoto... photos)
-        {
-//            EventBus.getDefault().post(new AddPhotoToGridEvent(photos[0]));
         }
 
         @Override

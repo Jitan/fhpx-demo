@@ -1,7 +1,5 @@
 package me.jitan.fhpxdemo;
 
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,60 +11,51 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
-import com.bumptech.glide.request.target.SimpleTarget;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import me.jitan.fhpxdemo.model.FhpxPhoto;
 
 public class ImageAdapter extends ArrayAdapter<FhpxPhoto>
 {
     private LayoutInflater mInflater;
     private Fragment mFragment;
-    private ImageView mImageView;
+    private ViewHolder mHolder;
 
     public ImageAdapter(Fragment fragment)
     {
         super(fragment.getActivity(), 0);
         mInflater = LayoutInflater.from((fragment.getActivity()));
         mFragment = fragment;
-//        new GlideBuilder(fragment.getActivity()).setBitmapPool(new LruBitmapPool());
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent)
     {
-        final FhpxPhoto fhpxPhoto = getItem(position);
-
-        if (convertView == null)
+        if (convertView != null)
+        {
+            mHolder = (ViewHolder) convertView.getTag();
+        }
+        else
         {
             convertView = mInflater.inflate(R.layout.grid_item, parent, false);
+            mHolder = new ViewHolder(convertView);
+            convertView.setTag(mHolder);
         }
-        mImageView = (ImageView) convertView.findViewById(R.id.grid_item_image);
 
-        loadThumb(fhpxPhoto);
 
-//        Log.d("ImageAdapter", "---------");
-//        Log.d("ImageAdapter", "Loading thumb nr: " + position);
-//        if (fhpxPhoto.getThumb() == null)
-//        {
-//            Log.d("ImageAdapter", "FROM INTERNET");
-//            loadThumb(fhpxPhoto);
-//        }
-//        else
-//        {
-//            mImageView.setImageDrawable(fhpxPhoto.getThumb());
-//            Log.d("ImageAdapter", "FROM MEMORY");
-//        }
-//        Log.d("ImageAdapter", "---------");
+        loadThumb(position);
 
         return convertView;
     }
 
-    private void loadThumb(final FhpxPhoto fhpxPhoto)
+    private void loadThumb(int position)
     {
+        final FhpxPhoto fhpxPhoto = getItem(position);
         Glide.with(mFragment)
-                .load(fhpxPhoto.getThumbUrl())
+                .load(fhpxPhoto.getUrl())
                 .crossFade()
-                .into(new GlideDrawableImageViewTarget(mImageView)
+                .into(new GlideDrawableImageViewTarget(mHolder.imageView)
                 {
                     @Override
                     public void onResourceReady(GlideDrawable resource,
@@ -78,28 +67,13 @@ public class ImageAdapter extends ArrayAdapter<FhpxPhoto>
                 });
     }
 
-    private void preloadThumb(final FhpxPhoto fhpxPhoto)
+    static class ViewHolder
     {
-        Glide.with(mFragment)
-                .load(fhpxPhoto.getThumbUrl())
-                .asBitmap()
-                .into(new SimpleTarget<Bitmap>(280, 280)
-                {
-                    @Override
-                    public void onResourceReady(Bitmap resource,
-                            GlideAnimation<? super Bitmap> glideAnimation)
-                    {
-                        fhpxPhoto.setThumb(new BitmapDrawable(mFragment.getResources(), resource));
-                    }
-                });
+        @InjectView(R.id.grid_item_image) ImageView imageView;
+
+        public ViewHolder(View view)
+        {
+            ButterKnife.inject(this, view);
+        }
     }
-
-    @Override
-    public void add(FhpxPhoto fhpxPhoto)
-    {
-        super.add(fhpxPhoto);
-//        preloadThumb(fhpxPhoto);
-    }
-
-
 }

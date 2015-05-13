@@ -15,6 +15,8 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import de.greenrobot.event.EventBus;
 import me.jitan.fhpxdemo.R;
 import me.jitan.fhpxdemo.event.LoadPhotoDetailEvent;
@@ -23,12 +25,12 @@ import uk.co.senab.photoview.PhotoViewAttacher;
 
 public class PhotoDetailFragment extends Fragment
 {
-    private ImageView mImageView;
-    private TextView mTextView;
     private PhotoViewAttacher mAttacher;
-    private ProgressBar mProgressBar;
     private Drawable mPhoto;
     private String mAuthor;
+    @InjectView(R.id.photo_detail_imageview) ImageView mImageView;
+    @InjectView(R.id.photo_detail_textview) TextView mTextView;
+    @InjectView(R.id.photo_detail_progress_bar) ProgressBar mProgressBar;
 
 
     @Override
@@ -39,28 +41,11 @@ public class PhotoDetailFragment extends Fragment
     }
 
     @Override
-    public void onStart()
-    {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onStop()
-    {
-        EventBus.getDefault().unregister(this);
-        super.onStop();
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.fragment_photo_detail, container, false);
-
-        mTextView = (TextView) view.findViewById(R.id.photo_detail_textview);
-        mImageView = (ImageView) view.findViewById(R.id.photo_detail_imageview);
-        mProgressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
+        ButterKnife.inject(this, view);
 
         if (mPhoto != null && mAuthor != null)
         {
@@ -104,9 +89,29 @@ public class PhotoDetailFragment extends Fragment
     }
 
     @Override
+    public void onStart()
+    {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop()
+    {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
+    @Override
     public void onDestroy()
     {
         super.onDestroy();
         mAttacher.cleanup();
+    }
+
+    @Override public void onDestroyView()
+    {
+        super.onDestroyView();
+        ButterKnife.reset(this);
     }
 }
