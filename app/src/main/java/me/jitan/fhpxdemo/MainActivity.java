@@ -1,10 +1,8 @@
 package me.jitan.fhpxdemo;
 
 import android.content.Context;
-import android.content.pm.ActivityInfo;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -26,27 +24,18 @@ import com.koushikdutta.ion.Ion;
 import de.greenrobot.event.EventBus;
 import me.jitan.fhpxdemo.event.LoadPhotoDetailEvent;
 import me.jitan.fhpxdemo.event.SearchEvent;
-import me.jitan.fhpxdemo.fragment.GridFragment;
-import me.jitan.fhpxdemo.fragment.PhotoDetailFragment;
+import me.jitan.fhpxdemo.helper.FragmentHelper;
 
 
 public class MainActivity extends AppCompatActivity
 {
-    private static final String ACTIVE_FRAGMENT_KEY = "active_fragment_key";
-    public final static String PHOTO_DETAIL_FRAGMENT_TAG = "photo_detail_fragment";
-    public final static String GRID_FRAGMENT_TAG = "grid_fragment";
     private MenuItem mSearchAction;
     private Boolean mSearchOpened;
-    private String mSearchQuery;
-    private EditText mSearchField;
-    private String mSortOptions;
-    private ActionBar mActionBar;
+    private String mSearchQuery, mSortOptions;
     private Drawable mIconCloseSearch, mIconOpenSearch;
-    private GridFragment mGridFragment;
-    private PhotoDetailFragment mPhotoDetailFragment;
-    private FragmentManager mFragmentManager;
-    private String mLastVisibleFragment;
     private IonClient mIonClient;
+    private EditText mSearchField;
+    private ActionBar mActionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -54,6 +43,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Get a reference to IonClient so it will listen to Eventbus events
         mIonClient = IonClient.getInstance(this);
         Ion.getDefault(this).configure().setLogging("fhpx-ion", Log.DEBUG);
 
@@ -61,13 +51,7 @@ public class MainActivity extends AppCompatActivity
         Ion.getDefault(this).getHttpClient().getSSLSocketMiddleware().setSpdyEnabled(false);
 
         setupToolbar();
-
-        if (savedInstanceState != null)
-        {
-            mLastVisibleFragment = savedInstanceState.getString(ACTIVE_FRAGMENT_KEY);
-        }
-
-        setupFragments(savedInstanceState);
+        FragmentHelper.setupFragments(this, savedInstanceState);
     }
 
     @Override
@@ -84,90 +68,12 @@ public class MainActivity extends AppCompatActivity
         super.onStop();
     }
 
-    private void setupFragments(Bundle savedInstanceState)
-    {
-        mFragmentManager = getSupportFragmentManager();
-
-        if (savedInstanceState != null)
-        {
-            mPhotoDetailFragment = (PhotoDetailFragment) mFragmentManager.findFragmentByTag
-                    (PHOTO_DETAIL_FRAGMENT_TAG);
-            mGridFragment = (GridFragment) mFragmentManager.findFragmentByTag(GRID_FRAGMENT_TAG);
-        }
-        else
-        {
-            mGridFragment = new GridFragment();
-            mPhotoDetailFragment = new PhotoDetailFragment();
-
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, mGridFragment, GRID_FRAGMENT_TAG)
-                    .add(R.id.fragment_container, mPhotoDetailFragment, PHOTO_DETAIL_FRAGMENT_TAG)
-                    .commit();
-        }
-
-        if (mLastVisibleFragment == null || mLastVisibleFragment.equals(GRID_FRAGMENT_TAG))
-        {
-            showGridFragment();
-        }
-        else
-        {
-            showPhotoDetailFragment();
-        }
-
-        setFragmentBackstackListener();
-    }
-
-    private void setFragmentBackstackListener()
-    {
-        mFragmentManager.addOnBackStackChangedListener(
-                new FragmentManager.OnBackStackChangedListener()
-                {
-                    @Override
-                    public void onBackStackChanged()
-                    {
-                        if (mGridFragment.isVisible())
-                        {
-                            mActionBar.show();
-                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                        }
-                    }
-                });
-    }
-
-    private void showGridFragment()
-    {
-        mActionBar.show();
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
-        mFragmentManager.beginTransaction()
-                .hide(mPhotoDetailFragment)
-                .show(mGridFragment)
-                .commit();
-    }
-
-    private void showPhotoDetailFragment()
-    {
-        mActionBar.hide();
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-        mFragmentManager.beginTransaction()
-                .hide(mGridFragment)
-                .show(mPhotoDetailFragment)
-                .addToBackStack(null)
-                .commit();
-    }
-
-
     @Override
     protected void onSaveInstanceState(Bundle outState)
     {
-        if (mPhotoDetailFragment.isHidden())
-        {
-            outState.putString(ACTIVE_FRAGMENT_KEY, GRID_FRAGMENT_TAG);
-        }
-        else
-        {
-            outState.putString(ACTIVE_FRAGMENT_KEY, PHOTO_DETAIL_FRAGMENT_TAG);
-        }
+        outState.putString(FragmentHelper.ACTIVE_FRAGMENT_KEY, FragmentHelper
+                .getActiveFragmentTag());
+
         super.onSaveInstanceState(outState);
     }
 
@@ -185,7 +91,7 @@ public class MainActivity extends AppCompatActivity
 
     public void onEventMainThread(LoadPhotoDetailEvent event)
     {
-        showPhotoDetailFragment();
+        FragmentHelper.showPhotoDetailFragment();
     }
 
     private void setupToolbar()
@@ -202,7 +108,7 @@ public class MainActivity extends AppCompatActivity
         // Non-deprecated form of getDrawable only available in API 21
         mIconCloseSearch = getResources().getDrawable(R.drawable.ic_close);
         mIconOpenSearch = getResources().getDrawable(R.drawable.ic_search);
-        mSearchField = (EditText) findViewById(R.id.editTextSearch);
+        mSearchField = (EditText) findViewById(R.id.toolbar_edittext_search);
         mSearchField.addTextChangedListener(new SearchWatcher());
         setKeyboardSearchListener();
     }
