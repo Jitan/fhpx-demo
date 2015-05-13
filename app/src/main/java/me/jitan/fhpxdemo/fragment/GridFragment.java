@@ -21,7 +21,6 @@ import me.jitan.fhpxdemo.event.SearchEvent;
 public class GridFragment extends Fragment
 {
     private ImageAdapter mImageAdapter;
-    private static final EventBus eventBus = EventBus.getDefault();
     @InjectView(R.id.gridview) GridView mGridView;
 
 
@@ -47,7 +46,7 @@ public class GridFragment extends Fragment
     @OnItemClick(R.id.gridview)
     public void loadPhotoDetailView(int position)
     {
-        eventBus.post(new LoadPhotoDetailEvent(mImageAdapter.getItem(position)));
+        EventBus.getDefault().post(new LoadPhotoDetailEvent(mImageAdapter.getItem(position)));
     }
 
 
