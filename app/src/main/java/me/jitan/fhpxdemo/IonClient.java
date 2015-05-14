@@ -46,7 +46,7 @@ public class IonClient
                 .LENGTH_SHORT).show();
 
         String sortOptions = (event.getSortOption() == null) ?
-                "highest_rating" : event.getSortOption();
+                "rating" : event.getSortOption();
 
         Ion.with(mContext)
                 .load(PhotoApi_BaseUrl +
@@ -74,7 +74,7 @@ public class IonClient
                 });
     }
 
-    private static final class JsonToFphxImageTask extends AsyncTask<JsonObject, FhpxPhoto,
+    private static final class JsonToFphxImageTask extends AsyncTask<JsonObject, Void,
             ArrayList<FhpxPhoto>>
     {
         @Override

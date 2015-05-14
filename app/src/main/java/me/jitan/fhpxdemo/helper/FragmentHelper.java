@@ -90,6 +90,7 @@ public class FragmentHelper
     {
         mActionBar.hide();
         mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+
         mFragmentManager.beginTransaction()
                 .hide(mGridFragment)
                 .show(mPhotoDetailFragment)

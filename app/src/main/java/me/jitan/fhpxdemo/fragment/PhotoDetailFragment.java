@@ -33,7 +33,6 @@ public class PhotoDetailFragment extends Fragment
     @InjectView(R.id.photo_detail_textview) TextView mTextView;
     @InjectView(R.id.photo_detail_progress_bar) ProgressBar mProgressBar;
 
-
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -55,7 +54,6 @@ public class PhotoDetailFragment extends Fragment
             mAttacher = new PhotoViewAttacher(mImageView);
             mAttacher.update();
         }
-
         return view;
     }
 

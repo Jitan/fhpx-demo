@@ -51,7 +51,7 @@ public class ImageAdapter extends ArrayAdapter<FhpxPhoto>
     {
         final FhpxPhoto fhpxPhoto = getItem(position);
         Glide.with(mFragment)
-                .load(fhpxPhoto.getUrl())
+                .load(fhpxPhoto.getThumbUrl())
                 .crossFade()
                 .into(new GlideDrawableImageViewTarget(mHolder.imageView)
                 {

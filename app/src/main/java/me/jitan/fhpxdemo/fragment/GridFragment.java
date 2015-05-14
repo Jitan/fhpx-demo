@@ -23,7 +23,6 @@ public class GridFragment extends Fragment
     private ImageAdapter mImageAdapter;
     @InjectView(R.id.gridview) GridView mGridView;
 
-
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -48,7 +47,6 @@ public class GridFragment extends Fragment
     {
         EventBus.getDefault().post(new LoadPhotoDetailEvent(mImageAdapter.getItem(position)));
     }
-
 
     public void onEventMainThread(AddPhotoToGridEvent event)
     {
@@ -84,5 +82,4 @@ public class GridFragment extends Fragment
         super.onDestroyView();
         ButterKnife.reset(this);
     }
-
 }

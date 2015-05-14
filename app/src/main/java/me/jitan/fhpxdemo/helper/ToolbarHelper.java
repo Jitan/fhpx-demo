@@ -68,7 +68,7 @@ public class ToolbarHelper
 
             case R.id.action_sort_rating:
                 Toast.makeText(mActivity, "Sort on rating", Toast.LENGTH_SHORT).show();
-                mSortOptions = "rating";
+                mSortOptions = "highest_rating";
                 loadSearchResults();
                 return true;
 
@@ -84,7 +84,6 @@ public class ToolbarHelper
                 loadSearchResults();
                 return true;
         }
-
         return false;
     }
 
@@ -183,17 +182,14 @@ public class ToolbarHelper
 
     private static class SearchWatcher implements TextWatcher
     {
-
         @Override
         public void beforeTextChanged(CharSequence c, int i, int i2, int i3)
         {
-
         }
 
         @Override
         public void onTextChanged(CharSequence c, int i, int i2, int i3)
         {
-
         }
 
         @Override
@@ -201,6 +197,5 @@ public class ToolbarHelper
         {
             mSearchQuery = mSearchField.getText().toString();
         }
-
     }
 }
