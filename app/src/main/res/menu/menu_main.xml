@@ -1,27 +1,33 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto"
-      xmlns:tools="http://schemas.android.com/tools"
-      tools:context=".MainActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity"
+    >
 
-    <item android:id="@+id/action_search"
-          android:title="@string/search_title"
-          android:icon="@drawable/ic_search"
-          android:orderInCategory="100"
-          app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/action_sort_rating"
-        android:orderInCategory="1"
-        android:title="@string/action_sort_rating"
-        android:icon="@drawable/ic_checked"
-        app:showAsAction="never"/>
-    <item
-        android:id="@+id/action_sort_date"
-        android:orderInCategory="2"
-        android:title="@string/action_sort_date"
-        app:showAsAction="never"/>
-    <item
-        android:id="@+id/action_sort_favorites"
-        android:orderInCategory="3"
-        android:title="@string/action_sort_favorites"
-        app:showAsAction="never"/>
+  <item
+      android:id="@+id/action_search"
+      android:title="@string/search_title"
+      android:icon="@drawable/ic_search"
+      android:orderInCategory="100"
+      app:showAsAction="ifRoom"
+      />
+  <item
+      android:id="@+id/action_sort_rating"
+      android:orderInCategory="1"
+      android:title="@string/action_sort_rating"
+      android:icon="@drawable/ic_checked"
+      app:showAsAction="never"
+      />
+  <item
+      android:id="@+id/action_sort_date"
+      android:orderInCategory="2"
+      android:title="@string/action_sort_date"
+      app:showAsAction="never"
+      />
+  <item
+      android:id="@+id/action_sort_favorites"
+      android:orderInCategory="3"
+      android:title="@string/action_sort_favorites"
+      app:showAsAction="never"
+      />
 </menu>

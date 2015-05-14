@@ -2,34 +2,37 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    >
 
-    <ImageView
-        android:id="@+id/photo_detail_imageview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/black"
-        android:contentDescription="@string/photo_detail_content_description"/>
+  <ImageView
+      android:id="@+id/photo_detail_imageview"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:background="@android:color/black"
+      android:contentDescription="@string/photo_detail_content_description"
+      />
 
-    <TextView
-        android:id="@+id/photo_detail_textview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:background="#55000000"
-        android:paddingBottom="15dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingTop="15dp"
-        android:textColor="@android:color/white"/>
+  <TextView
+      android:id="@+id/photo_detail_textview"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="bottom"
+      android:background="#55000000"
+      android:paddingBottom="15dp"
+      android:paddingLeft="10dp"
+      android:paddingRight="10dp"
+      android:paddingTop="15dp"
+      android:textColor="@android:color/white"
+      />
 
-    <ProgressBar
-        style="?android:attr/progressBarStyleSmallInverse"
-        android:id="@+id/photo_detail_progress_bar"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:indeterminate="true"
-        android:layout_gravity="center"
-        android:visibility="invisible"
-        />
+  <ProgressBar
+      style="?android:attr/progressBarStyleSmallInverse"
+      android:id="@+id/photo_detail_progress_bar"
+      android:layout_width="50dp"
+      android:layout_height="50dp"
+      android:indeterminate="true"
+      android:layout_gravity="center"
+      android:visibility="invisible"
+      />
 </FrameLayout>

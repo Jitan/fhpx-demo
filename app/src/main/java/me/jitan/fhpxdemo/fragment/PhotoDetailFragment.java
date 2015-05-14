@@ -10,115 +10,95 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
-
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 import de.greenrobot.event.EventBus;
 import me.jitan.fhpxdemo.R;
 import me.jitan.fhpxdemo.event.LoadPhotoDetailEvent;
 import me.jitan.fhpxdemo.model.FhpxPhoto;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
-public class PhotoDetailFragment extends Fragment
-{
-    private PhotoViewAttacher mAttacher;
-    private Drawable mPhoto;
-    private String mAuthor;
-    @InjectView(R.id.photo_detail_imageview) ImageView mImageView;
-    @InjectView(R.id.photo_detail_textview) TextView mTextView;
-    @InjectView(R.id.photo_detail_progress_bar) ProgressBar mProgressBar;
+public class PhotoDetailFragment extends Fragment {
+  private PhotoViewAttacher mAttacher;
+  private Drawable mPhoto;
+  private String mAuthor;
+  @InjectView(R.id.photo_detail_imageview) ImageView mImageView;
+  @InjectView(R.id.photo_detail_textview) TextView mTextView;
+  @InjectView(R.id.photo_detail_progress_bar) ProgressBar mProgressBar;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        setRetainInstance(true);
+  @Override public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setRetainInstance(true);
+  }
+
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
+      Bundle savedInstanceState) {
+    View view = inflater.inflate(R.layout.fragment_photo_detail, container, false);
+    ButterKnife.inject(this, view);
+
+    if (mPhoto != null && mAuthor != null) {
+      mImageView.setImageDrawable(mPhoto);
+      mTextView.setText("Author - " + mAuthor);
+      mAttacher = new PhotoViewAttacher(mImageView);
+      mAttacher.update();
     }
+    return view;
+  }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState)
-    {
-        View view = inflater.inflate(R.layout.fragment_photo_detail, container, false);
-        ButterKnife.inject(this, view);
+  public void setPhoto(final FhpxPhoto fhpxPhoto) {
+    mProgressBar.setVisibility(View.VISIBLE);
+    mAttacher = new PhotoViewAttacher(mImageView);
 
-        if (mPhoto != null && mAuthor != null)
-        {
-            mImageView.setImageDrawable(mPhoto);
-            mTextView.setText("Author - " + mAuthor);
-            mAttacher = new PhotoViewAttacher(mImageView);
+    Glide.with(this)
+        .load(fhpxPhoto.getLargeUrl())
+        .placeholder(fhpxPhoto.getThumb())
+        .into(new GlideDrawableImageViewTarget(mImageView) {
+
+          @Override public void onResourceReady(GlideDrawable resource,
+              GlideAnimation<? super GlideDrawable> animation) {
+            super.onResourceReady(resource, animation);
+            mPhoto = resource;
+
             mAttacher.update();
-        }
-        return view;
-    }
+            mProgressBar.setVisibility(View.INVISIBLE);
+          }
 
-    public void setPhoto(final FhpxPhoto fhpxPhoto)
-    {
-        mProgressBar.setVisibility(View.VISIBLE);
-        mAttacher = new PhotoViewAttacher(mImageView);
+          @Override public void onLoadFailed(Exception e, Drawable errorDrawable) {
+            super.onLoadFailed(e, errorDrawable);
+            Toast.makeText(getActivity(), "Connection error, unable to load image",
+                Toast.LENGTH_SHORT).show();
+            mProgressBar.setVisibility(View.INVISIBLE);
+          }
+        });
 
-        Glide.with(this)
-                .load(fhpxPhoto.getLargeUrl())
-                .placeholder(fhpxPhoto.getThumb())
-                .into(new GlideDrawableImageViewTarget(mImageView)
-                {
-                    @Override
-                    public void onResourceReady(GlideDrawable resource,
-                            GlideAnimation<? super GlideDrawable> animation)
-                    {
-                        super.onResourceReady(resource, animation);
-                        mPhoto = resource;
+    mAuthor = fhpxPhoto.getAuthorName();
+    mTextView.setText("Author - " + mAuthor);
+  }
 
-                        mAttacher.update();
-                        mProgressBar.setVisibility(View.INVISIBLE);
-                    }
+  public void onEventMainThread(LoadPhotoDetailEvent event) {
+    setPhoto(event.getFhpxPhoto());
+  }
 
-                    @Override public void onLoadFailed(Exception e, Drawable errorDrawable)
-                    {
-                        super.onLoadFailed(e, errorDrawable);
-                        Toast.makeText(getActivity(), "Connection error, unable to load image",
-                                Toast.LENGTH_SHORT)
-                                .show();
-                        mProgressBar.setVisibility(View.INVISIBLE);
-                    }
-                });
-        mAuthor = fhpxPhoto.getAuthorName();
-        mTextView.setText("Author - " + mAuthor);
-    }
+  @Override public void onStart() {
+    super.onStart();
+    EventBus.getDefault().register(this);
+  }
 
-    public void onEventMainThread(LoadPhotoDetailEvent event)
-    {
-        setPhoto(event.getFhpxPhoto());
-    }
+  @Override public void onStop() {
+    EventBus.getDefault().unregister(this);
+    super.onStop();
+  }
 
-    @Override
-    public void onStart()
-    {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
+  @Override public void onDestroy() {
+    super.onDestroy();
+  }
 
-    @Override
-    public void onStop()
-    {
-        EventBus.getDefault().unregister(this);
-        super.onStop();
-    }
-
-    @Override
-    public void onDestroy()
-    {
-        super.onDestroy();
-    }
-
-    @Override public void onDestroyView()
-    {
-        ButterKnife.reset(this);
-        super.onDestroyView();
-    }
+  @Override public void onDestroyView() {
+    ButterKnife.reset(this);
+    super.onDestroyView();
+  }
 }
