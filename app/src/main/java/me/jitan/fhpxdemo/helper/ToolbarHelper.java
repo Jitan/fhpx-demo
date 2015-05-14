@@ -21,17 +21,16 @@ import me.jitan.fhpxdemo.R;
 import me.jitan.fhpxdemo.event.SearchEvent;
 
 public class ToolbarHelper {
-  public static AppCompatActivity mActivity;
+  private static AppCompatActivity mActivity;
   private static MenuItem mSearchAction;
   private static Boolean mSearchOpened;
-  private static String mSearchQuery, mSortOptions;
+  private static String mSearchQuery, mSortOption;
   private static Drawable mIconCloseSearch, mIconOpenSearch;
   private static EditText mSearchField;
   private static ActionBar mActionBar;
 
   public static void setupToolbar(AppCompatActivity activity) {
     mActivity = activity;
-
     Toolbar toolbar = ButterKnife.findById(mActivity, R.id.toolbar);
     if (toolbar != null) {
       mActivity.setSupportActionBar(toolbar);
@@ -61,19 +60,19 @@ public class ToolbarHelper {
 
       case R.id.action_sort_rating:
         Toast.makeText(mActivity, "Sort on rating", Toast.LENGTH_SHORT).show();
-        mSortOptions = "highest_rating";
+        mSortOption = "highest_rating";
         loadSearchResults();
         return true;
 
       case R.id.action_sort_date:
         Toast.makeText(mActivity, "Sort on date", Toast.LENGTH_SHORT).show();
-        mSortOptions = "created_at";
+        mSortOption = "created_at";
         loadSearchResults();
         return true;
 
       case R.id.action_sort_favorites:
         Toast.makeText(mActivity, "Sort on favorites", Toast.LENGTH_SHORT).show();
-        mSortOptions = "favorites_count";
+        mSortOption = "favorites_count";
         loadSearchResults();
         return true;
     }
@@ -123,16 +122,11 @@ public class ToolbarHelper {
 
   private static void loadSearchResults() {
     ToolbarHelper.hideKeyboard();
-    mSearchQuery = mSearchField.getText().toString().trim();
+    mSearchQuery = mSearchField.getText().toString();
 
     if (!mSearchQuery.isEmpty()) {
-      EventBus.getDefault().post(new SearchEvent(cleanSearchQuery(mSearchQuery), mSortOptions));
+      EventBus.getDefault().post(new SearchEvent(mSearchQuery, mSortOption));
     }
-  }
-
-  private static String cleanSearchQuery(String searchQuery) {
-    searchQuery = searchQuery.replaceAll("[^a-zA-Z0-9]+", "+").replaceAll("\\+$", "");
-    return searchQuery;
   }
 
   public static void hideKeyboard() {
@@ -158,5 +152,13 @@ public class ToolbarHelper {
     @Override public void afterTextChanged(Editable editable) {
       mSearchQuery = mSearchField.getText().toString();
     }
+  }
+
+  public static String getSearchQuery() {
+    return mSearchQuery;
+  }
+
+  public static String getSortOption() {
+    return mSortOption;
   }
 }

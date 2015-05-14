@@ -49,6 +49,10 @@ public class PhotoDetailFragment extends Fragment {
     return view;
   }
 
+  public void onEventMainThread(LoadPhotoDetailEvent event) {
+    setPhoto(event.getFhpxPhoto());
+  }
+
   public void setPhoto(final FhpxPhoto fhpxPhoto) {
     mProgressBar.setVisibility(View.VISIBLE);
     mAttacher = new PhotoViewAttacher(mImageView);
@@ -62,7 +66,6 @@ public class PhotoDetailFragment extends Fragment {
               GlideAnimation<? super GlideDrawable> animation) {
             super.onResourceReady(resource, animation);
             mPhoto = resource;
-
             mAttacher.update();
             mProgressBar.setVisibility(View.INVISIBLE);
           }
@@ -77,10 +80,6 @@ public class PhotoDetailFragment extends Fragment {
 
     mAuthor = fhpxPhoto.getAuthorName();
     mTextView.setText("Author - " + mAuthor);
-  }
-
-  public void onEventMainThread(LoadPhotoDetailEvent event) {
-    setPhoto(event.getFhpxPhoto());
   }
 
   @Override public void onStart() {

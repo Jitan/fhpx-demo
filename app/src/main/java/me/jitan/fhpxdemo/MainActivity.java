@@ -6,6 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import com.koushikdutta.ion.Ion;
 import de.greenrobot.event.EventBus;
+import me.jitan.fhpxdemo.event.LoadNextPageEvent;
 import me.jitan.fhpxdemo.event.LoadPhotoDetailEvent;
 import me.jitan.fhpxdemo.event.SearchEvent;
 import me.jitan.fhpxdemo.helper.FragmentHelper;
@@ -36,7 +37,11 @@ public class MainActivity extends AppCompatActivity {
   }
 
   public void onEventMainThread(SearchEvent event) {
-    IonClient.getInstance(this).doSearch(event);
+    IonClient.getInstance(this).doSearch(event.getSearchQuery(), event.getSortOption());
+  }
+
+  public void onEventMainThread(LoadNextPageEvent event) {
+    IonClient.getInstance(this).loadNextPage();
   }
 
   @Override protected void onSaveInstanceState(Bundle outState) {

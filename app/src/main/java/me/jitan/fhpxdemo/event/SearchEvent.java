@@ -4,8 +4,8 @@ public class SearchEvent {
   private final String mSearchQuery, mSortOption;
 
   public SearchEvent(String searchQuery, String sortOption) {
-    this.mSearchQuery = searchQuery;
-    this.mSortOption = sortOption;
+    mSearchQuery = searchQuery;
+    mSortOption = sortOption;
   }
 
   public String getSearchQuery() {
@@ -15,4 +15,5 @@ public class SearchEvent {
   public String getSortOption() {
     return mSortOption;
   }
+
 }

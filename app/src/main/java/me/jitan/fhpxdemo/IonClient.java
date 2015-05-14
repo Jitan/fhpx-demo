@@ -2,6 +2,7 @@ package me.jitan.fhpxdemo;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.Toast;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -11,7 +12,6 @@ import com.koushikdutta.ion.Ion;
 import de.greenrobot.event.EventBus;
 import java.util.ArrayList;
 import me.jitan.fhpxdemo.event.AddPhotoSetToGridEvent;
-import me.jitan.fhpxdemo.event.SearchEvent;
 import me.jitan.fhpxdemo.model.FhpxPhoto;
 
 public class IonClient {
@@ -26,6 +26,9 @@ public class IonClient {
   private final Context mContext;
   private static IonClient mInstance;
 
+  private String mLastSearchQuery, mLastSortOption;
+  private int mLastPageLoaded;
+
   private IonClient(Context context) {
     mContext = context.getApplicationContext();
   }
@@ -37,15 +40,36 @@ public class IonClient {
     return mInstance;
   }
 
-  public void doSearch(SearchEvent event) {
-    Toast.makeText(mContext, "Searching for: " + event.getSearchQuery(), Toast.LENGTH_SHORT).show();
+  public void loadNextPage() {
+    if (mLastSearchQuery != null) {
+      doSearch(mLastSearchQuery, mLastSortOption, mLastPageLoaded + 1);
+    }
+  }
 
-    String sortOptions = (event.getSortOption() == null) ? "rating" : event.getSortOption();
+  public void doSearch(String searchQuery, String sortOption) {
+    doSearch(searchQuery, sortOption, 1);
+  }
+
+  private void doSearch(String searchQuery, String sortOption, int pageNumber) {
+    Log.d("json-parse", "Starting JSON download for page " + pageNumber);
+    searchQuery = cleanSearchQuery(searchQuery);
+    mLastSearchQuery = searchQuery;
+    mLastSortOption = sortOption;
+    mLastPageLoaded = pageNumber;
+
+    if (pageNumber == 1) {
+      Toast.makeText(mContext, "Searching for: " + searchQuery, Toast.LENGTH_SHORT).show();
+    } else {
+      Toast.makeText(mContext, "Loading more results..", Toast.LENGTH_SHORT).show();
+    }
+
+    sortOption = (sortOption == null) ? "rating" : sortOption;
 
     Ion.with(mContext)
         .load(PhotoApi_BaseUrl +
-            "/search?term=" + event.getSearchQuery() +
-            "&sort=" + sortOptions +
+            "/search?term=" + searchQuery +
+            "&sort=" + sortOption +
+            "&page=" + pageNumber +
             "&image_size[]=" + Thumb_Size +
             "&image_size[]=" + Normal_Size +
             "&image_size[]=" + Large_Size +
@@ -54,6 +78,8 @@ public class IonClient {
         .asJsonObject()
         .setCallback(new FutureCallback<JsonObject>() {
           @Override public void onCompleted(Exception e, JsonObject result) {
+            Log.d("json-parse", "Finished JSON download");
+
             if (e == null) {
               new JsonToFphxImageTask().execute(result);
             } else {
@@ -63,9 +89,15 @@ public class IonClient {
         });
   }
 
+  private String cleanSearchQuery(String searchQuery) {
+    searchQuery = searchQuery.replaceAll("[^a-zA-Z0-9]+", "+").replaceAll("\\+$", "");
+    return searchQuery;
+  }
+
   private static final class JsonToFphxImageTask
       extends AsyncTask<JsonObject, Void, ArrayList<FhpxPhoto>> {
     @Override protected ArrayList<FhpxPhoto> doInBackground(JsonObject... params) {
+      Log.d("json-parse", "Starting JSON parsing");
       ArrayList<FhpxPhoto> fhpxPhotoSet = new ArrayList<>();
 
       String authorName = "", thumbUrl = "", url = "", largeUrl = "";
@@ -79,6 +111,7 @@ public class IonClient {
         if (!userObject.get("firstname").isJsonNull()) {
           authorName = userObject.get("firstname").getAsString();
         }
+
         if (!userObject.get("lastname").isJsonNull()) {
           authorName += " " + userObject.get("lastname").getAsString();
         }
@@ -100,8 +133,10 @@ public class IonClient {
               break;
           }
         }
+
         fhpxPhotoSet.add(new FhpxPhoto(thumbUrl, url, largeUrl, authorName));
       }
+      Log.d("json-parse", "Finished JSON parsing");
       return fhpxPhotoSet;
     }
 
