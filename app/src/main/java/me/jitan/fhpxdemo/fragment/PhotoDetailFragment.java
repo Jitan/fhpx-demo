@@ -63,7 +63,7 @@ public class PhotoDetailFragment extends Fragment
         mAttacher = new PhotoViewAttacher(mImageView);
 
         Glide.with(this)
-                .load(fhpxPhoto.getUrl())
+                .load(fhpxPhoto.getLargeUrl())
                 .placeholder(fhpxPhoto.getThumb())
                 .into(new GlideDrawableImageViewTarget(mImageView)
                 {

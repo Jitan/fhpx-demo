@@ -2,6 +2,7 @@ package me.jitan.fhpxdemo;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -21,6 +22,8 @@ public class MainActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Ion.getDefault(this).configure().setLogging("fhpx-ion", Log.DEBUG);
 
         // Need to disable Spdy to access 500px API with Ion, otherwise we get weird errors.
         Ion.getDefault(this).getHttpClient().getSSLSocketMiddleware().setSpdyEnabled(false);

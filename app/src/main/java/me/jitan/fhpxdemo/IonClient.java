@@ -20,8 +20,12 @@ import me.jitan.fhpxdemo.model.FhpxPhoto;
 public class IonClient
 {
     private final static String PhotoApi_BaseUrl = "https://api.500px.com/v1/photos/";
-    private final static String Fhpx_ConsumerKey =
-            "&consumer_key=dNRpNAjucR4By3KM9HvFWgb4fa1rNArB6R2nBfv2";
+    private final static String Fhpx_ConsumerKey = "dNRpNAjucR4By3KM9HvFWgb4fa1rNArB6R2nBfv2";
+
+    private final static String Thumb_Size = "3";
+    private final static String Normal_Size = "1080";
+    private final static String Large_Size = "2048";
+    private final static String Number_Of_Search_Results = "100";
 
     private final Context mContext;
     private static IonClient mInstance;
@@ -49,13 +53,16 @@ public class IonClient
                 "rating" : event.getSortOption();
 
         Ion.with(mContext)
-                .load(PhotoApi_BaseUrl +
-                        "/search?term=" +
-                        event.getSearchQuery() +
-                        "&sort=" +
-                        sortOptions +
-                        "&image_size[]=3&image_size[]=1080&image_size[]=2048&rpp=100" +
-                        Fhpx_ConsumerKey)
+                .load(
+                        PhotoApi_BaseUrl +
+                        "/search?term=" + event.getSearchQuery() +
+                        "&sort=" + sortOptions +
+                        "&image_size[]=" + Thumb_Size +
+                        "&image_size[]=" + Normal_Size +
+                        "&image_size[]=" + Large_Size +
+                        "&rpp=" + Number_Of_Search_Results +
+                        "&consumer_key=" + Fhpx_ConsumerKey
+                     )
                 .asJsonObject()
                 .setCallback(new FutureCallback<JsonObject>()
                 {
@@ -109,16 +116,17 @@ public class IonClient
 
                     switch (size)
                     {
-                        case "3":
+                        case Thumb_Size:
                             thumbUrl = imageUrlObject.get("url").getAsString();
                             break;
-                        case "1080":
+                        case Normal_Size:
                             url = imageUrlObject.get("url").getAsString();
-                        case "2080":
+                            break;
+                        case Large_Size:
                             largeUrl = imageUrlObject.get("url").getAsString();
+                            break;
                     }
                 }
-
                 fhpxPhotoSet.add(new FhpxPhoto(thumbUrl, url, largeUrl, authorName));
             }
             return fhpxPhotoSet;
