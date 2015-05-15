@@ -26,7 +26,7 @@ public class ImageAdapter extends ArrayAdapter<FhpxPhoto> {
     mFragment = fragment;
   }
 
-  @Override public View getView(int position, View convertView, ViewGroup parent) {
+  @Override public View getView(final int position, View convertView, ViewGroup parent) {
     if (convertView != null) {
       mHolder = (ViewHolder) convertView.getTag();
     } else {
@@ -35,6 +35,14 @@ public class ImageAdapter extends ArrayAdapter<FhpxPhoto> {
       convertView.setTag(mHolder);
     }
     loadThumb(position);
+
+    //mHolder.imageView.setOnClickListener(new View.OnClickListener() {
+    //  @Override public void onClick(View v) {
+    //    Drawable thumb = c
+    //    EventBus.getDefault().post(new LoadPhotoDetailEvent(getItem(position), thumb));
+    //  }
+    //});
+
     return convertView;
   }
 
@@ -48,7 +56,6 @@ public class ImageAdapter extends ArrayAdapter<FhpxPhoto> {
           @Override public void onResourceReady(GlideDrawable resource,
               GlideAnimation<? super GlideDrawable> animation) {
             super.onResourceReady(resource, animation);
-            fhpxPhoto.setThumb(resource);
           }
         });
   }

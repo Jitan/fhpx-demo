@@ -3,22 +3,18 @@ package me.jitan.fhpxdemo.retrofit;
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import de.greenrobot.event.EventBus;
-import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import me.jitan.fhpxdemo.event.AddPhotoSetToGridEvent;
+import me.jitan.fhpxdemo.event.AddPhotoListToGridEvent;
 import me.jitan.fhpxdemo.model.FhpxPhoto;
+import me.jitan.fhpxdemo.retrofit.json.SearchResult;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-import retrofit.converter.GsonConverter;
 
 public class FhpxPhotoService {
   private final static String Fhpx_Api_Endpoint = "https://api.500px.com/v1";
@@ -49,13 +45,8 @@ public class FhpxPhotoService {
 
     mContext = context.getApplicationContext();
 
-    Type fhpxType = new TypeToken<List<FhpxPhoto>>(){}.getType();
-    Gson gson =
-        new GsonBuilder().registerTypeAdapter(fhpxType, new FhpxPhotoAdapter()).create();
-
     RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(Fhpx_Api_Endpoint)
         .setLogLevel(RestAdapter.LogLevel.BASIC)
-        .setConverter(new GsonConverter(gson))
         .build();
 
     mFhpxSearch = restAdapter.create(FhpxSearch.class);
@@ -87,19 +78,19 @@ public class FhpxPhotoService {
     updateQueryParams(searchQuery, sortOption, pageNumber);
     makeInfoToast(searchQuery, pageNumber);
 
-    mFhpxSearch.searchPhotos(mApiQueryOptions, Image_Sizes, new FhpxPhotoCallBack());
-  }
-
-  private void updateQueryParams(String searchQuery, String sortOption, int pageNumber) {
-    mApiQueryOptions.put("term", searchQuery);
-    mApiQueryOptions.put("sort", sortOption);
-    mApiQueryOptions.put("page", String.valueOf(pageNumber));
+    mFhpxSearch.searchPhotos(mApiQueryOptions, Image_Sizes, new SearchResultCallback());
   }
 
   private void updateHistory(String searchQuery, String sortOption, int pageNumber) {
     mLastSearchQuery = searchQuery;
     mLastSortOption = sortOption;
     mLastPageLoaded = pageNumber;
+  }
+
+  private void updateQueryParams(String searchQuery, String sortOption, int pageNumber) {
+    mApiQueryOptions.put("term", searchQuery);
+    mApiQueryOptions.put("sort", sortOption);
+    mApiQueryOptions.put("page", String.valueOf(pageNumber));
   }
 
   private void makeInfoToast(String searchQuery, int pageNumber) {
@@ -115,9 +106,19 @@ public class FhpxPhotoService {
     return searchQuery;
   }
 
+  private class SearchResultCallback implements Callback<SearchResult> {
+
+    @Override public void success(SearchResult searchResult, Response response) {
+      Log.d("json", searchResult.getPhotos().toString());
+    }
+
+    @Override public void failure(RetrofitError error) {
+      Toast.makeText(mContext, "Connection error", Toast.LENGTH_SHORT).show();
+    }
+  }
   private class FhpxPhotoCallBack implements Callback<List<FhpxPhoto>> {
     @Override public void success(List<FhpxPhoto> fhpxPhotos, Response response) {
-      EventBus.getDefault().post(new AddPhotoSetToGridEvent(fhpxPhotos));
+      EventBus.getDefault().post(new AddPhotoListToGridEvent(fhpxPhotos));
     }
 
     @Override public void failure(RetrofitError error) {

@@ -50,16 +50,16 @@ public class PhotoDetailFragment extends Fragment {
   }
 
   public void onEventMainThread(LoadPhotoDetailEvent event) {
-    setPhoto(event.getFhpxPhoto());
+    setPhoto(event.getFhpxPhoto(), event.getThumb());
   }
 
-  public void setPhoto(final FhpxPhoto fhpxPhoto) {
+  public void setPhoto(final FhpxPhoto fhpxPhoto, Drawable thumb) {
     mProgressBar.setVisibility(View.VISIBLE);
     mAttacher = new PhotoViewAttacher(mImageView);
 
     Glide.with(this)
         .load(fhpxPhoto.getLargeUrl())
-        .placeholder(fhpxPhoto.getThumb())
+        .placeholder(thumb)
         .into(new GlideDrawableImageViewTarget(mImageView) {
 
           @Override public void onResourceReady(GlideDrawable resource,

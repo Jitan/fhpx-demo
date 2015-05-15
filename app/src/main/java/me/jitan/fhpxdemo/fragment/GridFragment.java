@@ -1,5 +1,6 @@
 package me.jitan.fhpxdemo.fragment;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -8,13 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.GridView;
+import android.widget.ImageView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnItemClick;
 import de.greenrobot.event.EventBus;
-import me.jitan.fhpxdemo.adapter.ImageAdapter;
 import me.jitan.fhpxdemo.R;
-import me.jitan.fhpxdemo.event.AddPhotoSetToGridEvent;
+import me.jitan.fhpxdemo.adapter.ImageAdapter;
+import me.jitan.fhpxdemo.event.AddPhotoListToGridEvent;
 import me.jitan.fhpxdemo.event.AddPhotoToGridEvent;
 import me.jitan.fhpxdemo.event.LoadNextPageEvent;
 import me.jitan.fhpxdemo.event.LoadPhotoDetailEvent;
@@ -33,6 +35,11 @@ public class GridFragment extends Fragment {
     mLastTotalItemCount = 0;
   }
 
+  @Override public void onStart() {
+    super.onStart();
+    EventBus.getDefault().register(this);
+  }
+
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_grid, container, false);
@@ -46,19 +53,20 @@ public class GridFragment extends Fragment {
 
       @Override public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
           int totalItemCount) {
-        if (totalItemCount > mLastTotalItemCount && totalItemCount - firstVisibleItem < Photo_Scroll_Buffer) {
+        if (totalItemCount > mLastTotalItemCount
+            && totalItemCount - firstVisibleItem < Photo_Scroll_Buffer) {
           Log.d("gridview", "Loading next page");
           EventBus.getDefault().post(new LoadNextPageEvent());
           mLastTotalItemCount += 100;
         }
       }
     });
-
     return view;
   }
 
-  @OnItemClick(R.id.gridview) public void loadPhotoDetailView(int position) {
-    EventBus.getDefault().post(new LoadPhotoDetailEvent(mImageAdapter.getItem(position)));
+  @OnItemClick(R.id.gridview) public void loadPhotoDetailView(View view, int position) {
+    Drawable thumb = ((ImageView)ButterKnife.findById(view, R.id.grid_item_image)).getDrawable();
+    EventBus.getDefault().post(new LoadPhotoDetailEvent(mImageAdapter.getItem(position), thumb));
   }
 
   public void onEventMainThread(AddPhotoToGridEvent event) {
@@ -70,13 +78,8 @@ public class GridFragment extends Fragment {
     mLastTotalItemCount = 0;
   }
 
-  public void onEventMainThread(AddPhotoSetToGridEvent event) {
+  public void onEventMainThread(AddPhotoListToGridEvent event) {
     mImageAdapter.addAll(event.getFhpxPhotoList());
-  }
-
-  @Override public void onStart() {
-    super.onStart();
-    EventBus.getDefault().register(this);
   }
 
   @Override public void onStop() {

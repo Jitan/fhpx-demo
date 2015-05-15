@@ -3,10 +3,10 @@ package me.jitan.fhpxdemo.event;
 import java.util.List;
 import me.jitan.fhpxdemo.model.FhpxPhoto;
 
-public class AddPhotoSetToGridEvent {
+public class AddPhotoListToGridEvent {
   private final List<FhpxPhoto> mFhpxPhotoList;
 
-  public AddPhotoSetToGridEvent(List<FhpxPhoto> fhpxPhotoList) {
+  public AddPhotoListToGridEvent(List<FhpxPhoto> fhpxPhotoList) {
     mFhpxPhotoList = fhpxPhotoList;
   }
 

@@ -11,7 +11,7 @@ import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import de.greenrobot.event.EventBus;
 import java.util.ArrayList;
-import me.jitan.fhpxdemo.event.AddPhotoSetToGridEvent;
+import me.jitan.fhpxdemo.event.AddPhotoListToGridEvent;
 import me.jitan.fhpxdemo.model.FhpxPhoto;
 
 public class IonClient {
@@ -177,7 +177,7 @@ public class IonClient {
     }
 
     @Override protected void onPostExecute(ArrayList<FhpxPhoto> fhpxPhotoSet) {
-      EventBus.getDefault().post(new AddPhotoSetToGridEvent(fhpxPhotoSet));
+      EventBus.getDefault().post(new AddPhotoListToGridEvent(fhpxPhotoSet));
     }
   }
 }

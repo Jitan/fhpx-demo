@@ -11,7 +11,6 @@ import me.jitan.fhpxdemo.event.LoadPhotoDetailEvent;
 import me.jitan.fhpxdemo.event.SearchEvent;
 import me.jitan.fhpxdemo.helper.FragmentHelper;
 import me.jitan.fhpxdemo.helper.ToolbarHelper;
-import me.jitan.fhpxdemo.retrofit.FhpxPhotoService;
 
 public class MainActivity extends AppCompatActivity {
   @Override protected void onCreate(Bundle savedInstanceState) {
@@ -38,13 +37,13 @@ public class MainActivity extends AppCompatActivity {
   }
 
   public void onEventMainThread(SearchEvent event) {
-    //IonClient.getInstance(this).doSearch(event.getSearchQuery(), event.getSortOption());
-    FhpxPhotoService.getInstance(this).doSearch(event.getSearchQuery(), event.getSortOption());
+    IonClient.getInstance(this).doSearch(event.getSearchQuery(), event.getSortOption());
+    //FhpxPhotoService.getInstance(this).doSearch(event.getSearchQuery(), event.getSortOption());
   }
 
   public void onEventMainThread(LoadNextPageEvent event) {
-    //IonClient.getInstance(this).loadNextPage();
-    FhpxPhotoService.getInstance(this).loadNextPage();
+    IonClient.getInstance(this).loadNextPage();
+    //FhpxPhotoService.getInstance(this).loadNextPage();
   }
 
   @Override protected void onSaveInstanceState(Bundle outState) {
