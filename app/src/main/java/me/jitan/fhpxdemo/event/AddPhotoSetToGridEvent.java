@@ -1,16 +1,16 @@
 package me.jitan.fhpxdemo.event;
 
-import java.util.ArrayList;
+import java.util.List;
 import me.jitan.fhpxdemo.model.FhpxPhoto;
 
 public class AddPhotoSetToGridEvent {
-  private final ArrayList<FhpxPhoto> mFhpxPhotoList;
+  private final List<FhpxPhoto> mFhpxPhotoList;
 
-  public AddPhotoSetToGridEvent(ArrayList<FhpxPhoto> fhpxPhotoList) {
+  public AddPhotoSetToGridEvent(List<FhpxPhoto> fhpxPhotoList) {
     mFhpxPhotoList = fhpxPhotoList;
   }
 
-  public ArrayList<FhpxPhoto> getFhpxPhotoList() {
+  public List<FhpxPhoto> getFhpxPhotoList() {
     return mFhpxPhotoList;
   }
 }

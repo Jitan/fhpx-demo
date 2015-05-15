@@ -15,7 +15,7 @@ import me.jitan.fhpxdemo.event.AddPhotoSetToGridEvent;
 import me.jitan.fhpxdemo.model.FhpxPhoto;
 
 public class IonClient {
-  private final static String PhotoApi_BaseUrl = "https://api.500px.com/v1/photos/";
+  private final static String PhotoApi_BaseUrl = "https://api.500px.com/v1/photos/search";
   private final static String Fhpx_ConsumerKey = "dNRpNAjucR4By3KM9HvFWgb4fa1rNArB6R2nBfv2";
 
   private final static String Thumb_Size = "3";
@@ -63,11 +63,47 @@ public class IonClient {
       Toast.makeText(mContext, "Loading more results..", Toast.LENGTH_SHORT).show();
     }
 
+    // rating — Sort by current rating. (default)
+    // highest_rating — Sort by highest rating achieved (Menu action Sort by rating)
     sortOption = (sortOption == null) ? "rating" : sortOption;
+
+    //OkHttpClient client = new OkHttpClient();
+    //
+    //Request request = new Request.Builder().url(PhotoApi_BaseUrl +
+    //    "?term=" + searchQuery +
+    //    "&sort=" + sortOption +
+    //    "&page=" + pageNumber +
+    //    "&image_size[]=" + Thumb_Size +
+    //    "&image_size[]=" + Normal_Size +
+    //    "&image_size[]=" + Large_Size +
+    //    "&rpp=" + Number_Of_Search_Results +
+    //    "&consumer_key=" + Fhpx_ConsumerKey).build();
+    //
+    //client.newCall(request).enqueue(new Callback() {
+    //  @Override public void onFailure(Request request, IOException e) {
+    //    Toast.makeText(mContext, "Connection error", Toast.LENGTH_SHORT).show();
+    //  }
+    //
+    //  @Override public void onResponse(Response response) {
+    //    if (!response.isSuccessful()) {
+    //      Toast.makeText(mContext, "Connection error", Toast.LENGTH_SHORT).show();
+    //    }
+    //
+    //    JsonObject jsonResponse = null;
+    //    try {
+    //      jsonResponse = new JsonParser().parse(response.body().string()).getAsJsonObject();
+    //    } catch (IOException e) {
+    //      e.printStackTrace();
+    //    }
+    //
+    //    Log.d("json-parse", "Finished JSON download");
+    //    new JsonToFphxImageTask().execute(jsonResponse);
+    //  }
+    //});
 
     Ion.with(mContext)
         .load(PhotoApi_BaseUrl +
-            "/search?term=" + searchQuery +
+            "?term=" + searchQuery +
             "&sort=" + sortOption +
             "&page=" + pageNumber +
             "&image_size[]=" + Thumb_Size +

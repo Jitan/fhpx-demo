@@ -12,7 +12,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnItemClick;
 import de.greenrobot.event.EventBus;
-import me.jitan.fhpxdemo.ImageAdapter;
+import me.jitan.fhpxdemo.adapter.ImageAdapter;
 import me.jitan.fhpxdemo.R;
 import me.jitan.fhpxdemo.event.AddPhotoSetToGridEvent;
 import me.jitan.fhpxdemo.event.AddPhotoToGridEvent;

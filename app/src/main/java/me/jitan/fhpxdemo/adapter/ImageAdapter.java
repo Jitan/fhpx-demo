@@ -1,4 +1,4 @@
-package me.jitan.fhpxdemo;
+package me.jitan.fhpxdemo.adapter;
 
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
+import me.jitan.fhpxdemo.R;
 import me.jitan.fhpxdemo.model.FhpxPhoto;
 
 public class ImageAdapter extends ArrayAdapter<FhpxPhoto> {
