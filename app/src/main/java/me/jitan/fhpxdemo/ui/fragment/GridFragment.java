@@ -23,14 +23,14 @@ import me.jitan.fhpxdemo.event.SearchEvent;
 
 public class GridFragment extends Fragment {
   private static int Photo_Scroll_Buffer = 50;
-  private GridItemAdapter mGridItemAdapter;
+  private GridAdapter mGridAdapter;
   private int mLastTotalItemCount;
   @InjectView(R.id.gridview) GridView mGridView;
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setRetainInstance(true);
-    mGridItemAdapter = new GridItemAdapter(this);
+    mGridAdapter = new GridAdapter(this);
     mLastTotalItemCount = 0;
   }
 
@@ -43,7 +43,7 @@ public class GridFragment extends Fragment {
       Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_grid, container, false);
     ButterKnife.inject(this, view);
-    mGridView.setAdapter(mGridItemAdapter);
+    mGridView.setAdapter(mGridAdapter);
 
     mGridView.setOnScrollListener(new AbsListView.OnScrollListener() {
       @Override public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -65,20 +65,20 @@ public class GridFragment extends Fragment {
 
   @OnItemClick(R.id.gridview) public void loadPhotoDetailView(View view, int position) {
     Drawable thumb = ((ImageView)ButterKnife.findById(view, R.id.grid_item_image)).getDrawable();
-    EventBus.getDefault().post(new LoadPhotoDetailEvent(mGridItemAdapter.getItem(position), thumb));
+    EventBus.getDefault().post(new LoadPhotoDetailEvent(mGridAdapter.getItem(position), thumb));
   }
 
   public void onEventMainThread(AddPhotoToGridEvent event) {
-    mGridItemAdapter.add(event.getPhoto());
+    mGridAdapter.add(event.getPhoto());
   }
 
   public void onEventMainThread(SearchEvent event) {
-    mGridItemAdapter.clear();
+    mGridAdapter.clear();
     mLastTotalItemCount = 0;
   }
 
   public void onEventMainThread(AddPhotoListToGridEvent event) {
-    mGridItemAdapter.addAll(event.getPhotoList());
+    mGridAdapter.addAll(event.getPhotoList());
   }
 
   @Override public void onStop() {

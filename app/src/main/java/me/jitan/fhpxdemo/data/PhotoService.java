@@ -1,16 +1,15 @@
 package me.jitan.fhpxdemo.data;
 
-import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 import de.greenrobot.event.EventBus;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import me.jitan.fhpxdemo.event.AddPhotoListToGridEvent;
 import me.jitan.fhpxdemo.data.model.Photo;
 import me.jitan.fhpxdemo.data.model.SearchResults;
+import me.jitan.fhpxdemo.event.AddPhotoListToGridEvent;
+import me.jitan.fhpxdemo.event.CouldNotLoadImageEvent;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
@@ -23,34 +22,29 @@ public class PhotoService {
       Arrays.asList(PhotoSize.THUMB, PhotoSize.NORMAL, PhotoSize.LARGE);
   private final static String Number_Of_Search_Results = "100";
 
-  private final Context mContext;
   private static PhotoService mInstance;
   private static FhpxSearchService mFhpxSearchService;
 
-  private Map<String, String> mApiQueryOptions;
+  private Map<String, String> mQueryParams;
   private String mLastSearchQuery, mLastSortOption;
   private int mLastPageLoaded;
 
-  public static PhotoService getInstance(Context context) {
+  public static PhotoService getInstance() {
     if (mInstance == null) {
-      mInstance = new PhotoService(context);
+      mInstance = new PhotoService();
     }
     return mInstance;
   }
 
-  private PhotoService(Context context) {
-
-    mContext = context.getApplicationContext();
-
+  private PhotoService() {
     RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(Fhpx_Api_Endpoint)
         .setLogLevel(RestAdapter.LogLevel.BASIC)
         .build();
 
     mFhpxSearchService = restAdapter.create(FhpxSearchService.class);
-
-    mApiQueryOptions = new HashMap<>();
-    mApiQueryOptions.put("rpp", Number_Of_Search_Results);
-    mApiQueryOptions.put("consumer_key", Fhpx_Consumer_Key);
+    mQueryParams = new HashMap<>();
+    mQueryParams.put("rpp", Number_Of_Search_Results);
+    mQueryParams.put("consumer_key", Fhpx_Consumer_Key);
   }
 
   public void loadNextPage() {
@@ -73,9 +67,7 @@ public class PhotoService {
 
     updateHistory(searchQuery, sortOption, pageNumber);
     updateQueryParams(searchQuery, sortOption, pageNumber);
-    makeInfoToast(searchQuery, pageNumber);
-
-    mFhpxSearchService.searchPhotos(mApiQueryOptions, Image_Sizes, new SearchResultCallback());
+    mFhpxSearchService.searchPhotos(mQueryParams, Image_Sizes, new SearchResultCallback());
   }
 
   private void updateHistory(String searchQuery, String sortOption, int pageNumber) {
@@ -85,17 +77,9 @@ public class PhotoService {
   }
 
   private void updateQueryParams(String searchQuery, String sortOption, int pageNumber) {
-    mApiQueryOptions.put("term", searchQuery);
-    mApiQueryOptions.put("sort", sortOption);
-    mApiQueryOptions.put("page", String.valueOf(pageNumber));
-  }
-
-  private void makeInfoToast(String searchQuery, int pageNumber) {
-    if (pageNumber == 1) {
-      Toast.makeText(mContext, "Searching for: " + searchQuery, Toast.LENGTH_SHORT).show();
-    } else {
-      Toast.makeText(mContext, "Loading more results..", Toast.LENGTH_SHORT).show();
-    }
+    mQueryParams.put("term", searchQuery);
+    mQueryParams.put("sort", sortOption);
+    mQueryParams.put("page", String.valueOf(pageNumber));
   }
 
   private String cleanSearchQuery(String searchQuery) {
@@ -104,13 +88,12 @@ public class PhotoService {
   }
 
   private class SearchResultCallback implements Callback<SearchResults> {
-
     @Override public void success(SearchResults searchResults, Response response) {
       EventBus.getDefault().post(new AddPhotoListToGridEvent(searchResults.getPhotos()));
     }
 
     @Override public void failure(RetrofitError error) {
-      Toast.makeText(mContext, "Connection error", Toast.LENGTH_SHORT).show();
+      EventBus.getDefault().post(new CouldNotLoadImageEvent());
     }
   }
 

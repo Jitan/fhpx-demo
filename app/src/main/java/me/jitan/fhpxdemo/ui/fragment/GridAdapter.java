@@ -17,12 +17,12 @@ import me.jitan.fhpxdemo.data.PhotoService;
 import me.jitan.fhpxdemo.data.PhotoSize;
 import me.jitan.fhpxdemo.data.model.Photo;
 
-public class GridItemAdapter extends ArrayAdapter<Photo> {
+public class GridAdapter extends ArrayAdapter<Photo> {
   private LayoutInflater mInflater;
   private Fragment mFragment;
   private ViewHolder mHolder;
 
-  public GridItemAdapter(Fragment fragment) {
+  public GridAdapter(Fragment fragment) {
     super(fragment.getActivity(), 0);
     mInflater = LayoutInflater.from((fragment.getActivity()));
     mFragment = fragment;

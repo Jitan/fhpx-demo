@@ -4,26 +4,21 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import com.koushikdutta.ion.Ion;
+import android.widget.Toast;
 import de.greenrobot.event.EventBus;
 import me.jitan.fhpxdemo.R;
+import me.jitan.fhpxdemo.data.PhotoService;
+import me.jitan.fhpxdemo.event.CouldNotLoadImageEvent;
 import me.jitan.fhpxdemo.event.LoadNextPageEvent;
 import me.jitan.fhpxdemo.event.LoadPhotoDetailEvent;
 import me.jitan.fhpxdemo.event.SearchEvent;
 import me.jitan.fhpxdemo.ui.helper.FragmentHelper;
 import me.jitan.fhpxdemo.ui.helper.ToolbarHelper;
-import me.jitan.fhpxdemo.data.PhotoService;
 
 public class MainActivity extends AppCompatActivity {
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-
-    // Uncomment below for Ion network logging
-    //Ion.getDefault(this).configure().setLogging("fhpx-ion", Log.DEBUG);
-
-    // Need to disable Spdy to access 500px API with Ion, otherwise we get weird errors.
-    Ion.getDefault(this).getHttpClient().getSSLSocketMiddleware().setSpdyEnabled(false);
 
     ToolbarHelper.setupToolbar(this);
     FragmentHelper.setupFragments(this, savedInstanceState);
@@ -34,18 +29,22 @@ public class MainActivity extends AppCompatActivity {
     EventBus.getDefault().register(this);
   }
 
+  public void onEventMainThread(SearchEvent event) {
+    Toast.makeText(this, "Searching for: " + event.getSearchQuery(), Toast.LENGTH_SHORT).show();
+    PhotoService.getInstance().doSearch(event.getSearchQuery(), event.getSortOption());
+  }
+
+  public void onEventMainThread(LoadNextPageEvent event) {
+    Toast.makeText(this, "Loading more results..", Toast.LENGTH_SHORT).show();
+    PhotoService.getInstance().loadNextPage();
+  }
+
   public void onEventMainThread(LoadPhotoDetailEvent event) {
     FragmentHelper.showPhotoDetailFragment();
   }
 
-  public void onEventMainThread(SearchEvent event) {
-    //IonClient.getInstance(this).doSearch(event.getSearchQuery(), event.getSortOption());
-    PhotoService.getInstance(this).doSearch(event.getSearchQuery(), event.getSortOption());
-  }
-
-  public void onEventMainThread(LoadNextPageEvent event) {
-    //IonClient.getInstance(this).loadNextPage();
-    PhotoService.getInstance(this).loadNextPage();
+  public void onEventMainThread(CouldNotLoadImageEvent event) {
+    Toast.makeText(this, "Connection error", Toast.LENGTH_SHORT).show();
   }
 
   @Override protected void onSaveInstanceState(Bundle outState) {
