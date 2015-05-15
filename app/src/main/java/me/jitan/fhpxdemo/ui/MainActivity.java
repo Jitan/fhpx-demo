@@ -1,4 +1,4 @@
-package me.jitan.fhpxdemo;
+package me.jitan.fhpxdemo.ui;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -6,11 +6,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import com.koushikdutta.ion.Ion;
 import de.greenrobot.event.EventBus;
+import me.jitan.fhpxdemo.R;
 import me.jitan.fhpxdemo.event.LoadNextPageEvent;
 import me.jitan.fhpxdemo.event.LoadPhotoDetailEvent;
 import me.jitan.fhpxdemo.event.SearchEvent;
-import me.jitan.fhpxdemo.helper.FragmentHelper;
-import me.jitan.fhpxdemo.helper.ToolbarHelper;
+import me.jitan.fhpxdemo.ui.helper.FragmentHelper;
+import me.jitan.fhpxdemo.ui.helper.ToolbarHelper;
+import me.jitan.fhpxdemo.data.PhotoService;
 
 public class MainActivity extends AppCompatActivity {
   @Override protected void onCreate(Bundle savedInstanceState) {
@@ -37,13 +39,13 @@ public class MainActivity extends AppCompatActivity {
   }
 
   public void onEventMainThread(SearchEvent event) {
-    IonClient.getInstance(this).doSearch(event.getSearchQuery(), event.getSortOption());
-    //FhpxPhotoService.getInstance(this).doSearch(event.getSearchQuery(), event.getSortOption());
+    //IonClient.getInstance(this).doSearch(event.getSearchQuery(), event.getSortOption());
+    PhotoService.getInstance(this).doSearch(event.getSearchQuery(), event.getSortOption());
   }
 
   public void onEventMainThread(LoadNextPageEvent event) {
-    IonClient.getInstance(this).loadNextPage();
-    //FhpxPhotoService.getInstance(this).loadNextPage();
+    //IonClient.getInstance(this).loadNextPage();
+    PhotoService.getInstance(this).loadNextPage();
   }
 
   @Override protected void onSaveInstanceState(Bundle outState) {

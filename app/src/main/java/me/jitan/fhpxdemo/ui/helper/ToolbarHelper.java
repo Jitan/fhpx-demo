@@ -1,4 +1,4 @@
-package me.jitan.fhpxdemo.helper;
+package me.jitan.fhpxdemo.ui.helper;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;

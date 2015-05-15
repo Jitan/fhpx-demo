@@ -1,19 +1,19 @@
 package me.jitan.fhpxdemo.event;
 
 import android.graphics.drawable.Drawable;
-import me.jitan.fhpxdemo.model.FhpxPhoto;
+import me.jitan.fhpxdemo.data.model.Photo;
 
 public class LoadPhotoDetailEvent {
-  private final FhpxPhoto mFhpxPhoto;
+  private final Photo mPhoto;
   private final Drawable mThumb;
 
-  public LoadPhotoDetailEvent(FhpxPhoto fhpxPhoto, Drawable thumb) {
-    mFhpxPhoto = fhpxPhoto;
+  public LoadPhotoDetailEvent(Photo photo, Drawable thumb) {
+    mPhoto = photo;
     mThumb = thumb;
   }
 
-  public FhpxPhoto getFhpxPhoto() {
-    return mFhpxPhoto;
+  public Photo getPhoto() {
+    return mPhoto;
   }
 
   public Drawable getThumb() {

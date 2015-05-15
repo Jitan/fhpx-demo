@@ -1,15 +1,15 @@
 package me.jitan.fhpxdemo.event;
 
-import me.jitan.fhpxdemo.model.FhpxPhoto;
+import me.jitan.fhpxdemo.data.model.Photo;
 
 public class AddPhotoToGridEvent {
-  private final FhpxPhoto mFhpxPhoto;
+  private final Photo mPhoto;
 
-  public AddPhotoToGridEvent(FhpxPhoto fhpxPhoto) {
-    mFhpxPhoto = fhpxPhoto;
+  public AddPhotoToGridEvent(Photo photo) {
+    mPhoto = photo;
   }
 
-  public FhpxPhoto getFhpxPhoto() {
-    return mFhpxPhoto;
+  public Photo getPhoto() {
+    return mPhoto;
   }
 }

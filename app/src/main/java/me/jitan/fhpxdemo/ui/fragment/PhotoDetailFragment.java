@@ -1,4 +1,4 @@
-package me.jitan.fhpxdemo.fragment;
+package me.jitan.fhpxdemo.ui.fragment;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -19,7 +19,9 @@ import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import de.greenrobot.event.EventBus;
 import me.jitan.fhpxdemo.R;
 import me.jitan.fhpxdemo.event.LoadPhotoDetailEvent;
-import me.jitan.fhpxdemo.model.FhpxPhoto;
+import me.jitan.fhpxdemo.data.PhotoService;
+import me.jitan.fhpxdemo.data.PhotoSize;
+import me.jitan.fhpxdemo.data.model.Photo;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
 public class PhotoDetailFragment extends Fragment {
@@ -50,18 +52,17 @@ public class PhotoDetailFragment extends Fragment {
   }
 
   public void onEventMainThread(LoadPhotoDetailEvent event) {
-    setPhoto(event.getFhpxPhoto(), event.getThumb());
+    setPhoto(event.getPhoto(), event.getThumb());
   }
 
-  public void setPhoto(final FhpxPhoto fhpxPhoto, Drawable thumb) {
+  public void setPhoto(final Photo photo, Drawable thumb) {
     mProgressBar.setVisibility(View.VISIBLE);
     mAttacher = new PhotoViewAttacher(mImageView);
 
     Glide.with(this)
-        .load(fhpxPhoto.getLargeUrl())
+        .load(PhotoService.getPhotoUrl(photo, PhotoSize.LARGE))
         .placeholder(thumb)
         .into(new GlideDrawableImageViewTarget(mImageView) {
-
           @Override public void onResourceReady(GlideDrawable resource,
               GlideAnimation<? super GlideDrawable> animation) {
             super.onResourceReady(resource, animation);
@@ -78,7 +79,7 @@ public class PhotoDetailFragment extends Fragment {
           }
         });
 
-    mAuthor = fhpxPhoto.getAuthorName();
+    mAuthor = photo.getUser().getFullname();
     mTextView.setText("Author - " + mAuthor);
   }
 

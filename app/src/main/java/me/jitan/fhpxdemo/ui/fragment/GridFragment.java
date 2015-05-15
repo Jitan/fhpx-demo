@@ -1,4 +1,4 @@
-package me.jitan.fhpxdemo.fragment;
+package me.jitan.fhpxdemo.ui.fragment;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -15,7 +15,6 @@ import butterknife.InjectView;
 import butterknife.OnItemClick;
 import de.greenrobot.event.EventBus;
 import me.jitan.fhpxdemo.R;
-import me.jitan.fhpxdemo.adapter.ImageAdapter;
 import me.jitan.fhpxdemo.event.AddPhotoListToGridEvent;
 import me.jitan.fhpxdemo.event.AddPhotoToGridEvent;
 import me.jitan.fhpxdemo.event.LoadNextPageEvent;
@@ -24,14 +23,14 @@ import me.jitan.fhpxdemo.event.SearchEvent;
 
 public class GridFragment extends Fragment {
   private static int Photo_Scroll_Buffer = 50;
-  private ImageAdapter mImageAdapter;
+  private GridItemAdapter mGridItemAdapter;
   private int mLastTotalItemCount;
   @InjectView(R.id.gridview) GridView mGridView;
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setRetainInstance(true);
-    mImageAdapter = new ImageAdapter(this);
+    mGridItemAdapter = new GridItemAdapter(this);
     mLastTotalItemCount = 0;
   }
 
@@ -44,7 +43,7 @@ public class GridFragment extends Fragment {
       Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_grid, container, false);
     ButterKnife.inject(this, view);
-    mGridView.setAdapter(mImageAdapter);
+    mGridView.setAdapter(mGridItemAdapter);
 
     mGridView.setOnScrollListener(new AbsListView.OnScrollListener() {
       @Override public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -66,20 +65,20 @@ public class GridFragment extends Fragment {
 
   @OnItemClick(R.id.gridview) public void loadPhotoDetailView(View view, int position) {
     Drawable thumb = ((ImageView)ButterKnife.findById(view, R.id.grid_item_image)).getDrawable();
-    EventBus.getDefault().post(new LoadPhotoDetailEvent(mImageAdapter.getItem(position), thumb));
+    EventBus.getDefault().post(new LoadPhotoDetailEvent(mGridItemAdapter.getItem(position), thumb));
   }
 
   public void onEventMainThread(AddPhotoToGridEvent event) {
-    mImageAdapter.add(event.getFhpxPhoto());
+    mGridItemAdapter.add(event.getPhoto());
   }
 
   public void onEventMainThread(SearchEvent event) {
-    mImageAdapter.clear();
+    mGridItemAdapter.clear();
     mLastTotalItemCount = 0;
   }
 
   public void onEventMainThread(AddPhotoListToGridEvent event) {
-    mImageAdapter.addAll(event.getFhpxPhotoList());
+    mGridItemAdapter.addAll(event.getPhotoList());
   }
 
   @Override public void onStop() {

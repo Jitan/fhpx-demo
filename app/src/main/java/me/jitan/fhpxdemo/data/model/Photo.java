@@ -1,4 +1,4 @@
-package me.jitan.fhpxdemo.retrofit.json;
+package me.jitan.fhpxdemo.data.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

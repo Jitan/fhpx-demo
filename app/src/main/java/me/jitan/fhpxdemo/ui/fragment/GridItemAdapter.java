@@ -1,4 +1,4 @@
-package me.jitan.fhpxdemo.adapter;
+package me.jitan.fhpxdemo.ui.fragment;
 
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,14 +13,16 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import me.jitan.fhpxdemo.R;
-import me.jitan.fhpxdemo.model.FhpxPhoto;
+import me.jitan.fhpxdemo.data.PhotoService;
+import me.jitan.fhpxdemo.data.PhotoSize;
+import me.jitan.fhpxdemo.data.model.Photo;
 
-public class ImageAdapter extends ArrayAdapter<FhpxPhoto> {
+public class GridItemAdapter extends ArrayAdapter<Photo> {
   private LayoutInflater mInflater;
   private Fragment mFragment;
   private ViewHolder mHolder;
 
-  public ImageAdapter(Fragment fragment) {
+  public GridItemAdapter(Fragment fragment) {
     super(fragment.getActivity(), 0);
     mInflater = LayoutInflater.from((fragment.getActivity()));
     mFragment = fragment;
@@ -35,22 +37,14 @@ public class ImageAdapter extends ArrayAdapter<FhpxPhoto> {
       convertView.setTag(mHolder);
     }
     loadThumb(position);
-
-    //mHolder.imageView.setOnClickListener(new View.OnClickListener() {
-    //  @Override public void onClick(View v) {
-    //    Drawable thumb = c
-    //    EventBus.getDefault().post(new LoadPhotoDetailEvent(getItem(position), thumb));
-    //  }
-    //});
-
     return convertView;
   }
 
   private void loadThumb(int position) {
-    final FhpxPhoto fhpxPhoto = getItem(position);
-
+    Photo photoToBeLoaded = getItem(position);
+    String thumbUrl = PhotoService.getPhotoUrl(photoToBeLoaded, PhotoSize.THUMB);
     Glide.with(mFragment)
-        .load(fhpxPhoto.getThumbUrl())
+        .load(thumbUrl)
         .crossFade()
         .into(new GlideDrawableImageViewTarget(mHolder.imageView) {
           @Override public void onResourceReady(GlideDrawable resource,

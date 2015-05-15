@@ -1,4 +1,4 @@
-package me.jitan.fhpxdemo.helper;
+package me.jitan.fhpxdemo.ui.helper;
 
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -6,8 +6,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import me.jitan.fhpxdemo.R;
-import me.jitan.fhpxdemo.fragment.GridFragment;
-import me.jitan.fhpxdemo.fragment.PhotoDetailFragment;
+import me.jitan.fhpxdemo.ui.fragment.GridFragment;
+import me.jitan.fhpxdemo.ui.fragment.PhotoDetailFragment;
 
 public class FragmentHelper {
   private static String mLastVisibleFragment;

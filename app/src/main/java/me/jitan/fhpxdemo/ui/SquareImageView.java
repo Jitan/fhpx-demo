@@ -1,4 +1,4 @@
-package me.jitan.fhpxdemo;
+package me.jitan.fhpxdemo.ui;
 
 import android.content.Context;
 import android.util.AttributeSet;

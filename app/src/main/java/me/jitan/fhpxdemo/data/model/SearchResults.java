@@ -1,11 +1,11 @@
-package me.jitan.fhpxdemo.retrofit.json;
+package me.jitan.fhpxdemo.data.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchResult {
+public class SearchResults {
 
   @SerializedName("current_page") @Expose private Integer currentPage;
   @SerializedName("total_pages") @Expose private Integer totalPages;

@@ -1,4 +1,4 @@
-package me.jitan.fhpxdemo.retrofit;
+package me.jitan.fhpxdemo.data;
 
 import android.content.Context;
 import android.util.Log;
@@ -9,39 +9,36 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import me.jitan.fhpxdemo.event.AddPhotoListToGridEvent;
-import me.jitan.fhpxdemo.model.FhpxPhoto;
-import me.jitan.fhpxdemo.retrofit.json.SearchResult;
+import me.jitan.fhpxdemo.data.model.Photo;
+import me.jitan.fhpxdemo.data.model.SearchResults;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class FhpxPhotoService {
+public class PhotoService {
   private final static String Fhpx_Api_Endpoint = "https://api.500px.com/v1";
   private final static String Fhpx_Consumer_Key = "dNRpNAjucR4By3KM9HvFWgb4fa1rNArB6R2nBfv2";
-  public final static String Thumb_Size = "3";
-  public final static String Normal_Size = "1080";
-  public final static String Large_Size = "2048";
-  private final static List<String> Image_Sizes =
-      Arrays.asList(Thumb_Size, Normal_Size, Large_Size);
+  private final static List<PhotoSize> Image_Sizes =
+      Arrays.asList(PhotoSize.THUMB, PhotoSize.NORMAL, PhotoSize.LARGE);
   private final static String Number_Of_Search_Results = "100";
 
   private final Context mContext;
-  private static FhpxPhotoService mInstance;
-  private static FhpxSearch mFhpxSearch;
+  private static PhotoService mInstance;
+  private static FhpxSearchService mFhpxSearchService;
 
   private Map<String, String> mApiQueryOptions;
   private String mLastSearchQuery, mLastSortOption;
   private int mLastPageLoaded;
 
-  public static FhpxPhotoService getInstance(Context context) {
+  public static PhotoService getInstance(Context context) {
     if (mInstance == null) {
-      mInstance = new FhpxPhotoService(context);
+      mInstance = new PhotoService(context);
     }
     return mInstance;
   }
 
-  private FhpxPhotoService(Context context) {
+  private PhotoService(Context context) {
 
     mContext = context.getApplicationContext();
 
@@ -49,7 +46,7 @@ public class FhpxPhotoService {
         .setLogLevel(RestAdapter.LogLevel.BASIC)
         .build();
 
-    mFhpxSearch = restAdapter.create(FhpxSearch.class);
+    mFhpxSearchService = restAdapter.create(FhpxSearchService.class);
 
     mApiQueryOptions = new HashMap<>();
     mApiQueryOptions.put("rpp", Number_Of_Search_Results);
@@ -78,7 +75,7 @@ public class FhpxPhotoService {
     updateQueryParams(searchQuery, sortOption, pageNumber);
     makeInfoToast(searchQuery, pageNumber);
 
-    mFhpxSearch.searchPhotos(mApiQueryOptions, Image_Sizes, new SearchResultCallback());
+    mFhpxSearchService.searchPhotos(mApiQueryOptions, Image_Sizes, new SearchResultCallback());
   }
 
   private void updateHistory(String searchQuery, String sortOption, int pageNumber) {
@@ -106,23 +103,27 @@ public class FhpxPhotoService {
     return searchQuery;
   }
 
-  private class SearchResultCallback implements Callback<SearchResult> {
+  private class SearchResultCallback implements Callback<SearchResults> {
 
-    @Override public void success(SearchResult searchResult, Response response) {
-      Log.d("json", searchResult.getPhotos().toString());
+    @Override public void success(SearchResults searchResults, Response response) {
+      EventBus.getDefault().post(new AddPhotoListToGridEvent(searchResults.getPhotos()));
     }
 
     @Override public void failure(RetrofitError error) {
       Toast.makeText(mContext, "Connection error", Toast.LENGTH_SHORT).show();
     }
   }
-  private class FhpxPhotoCallBack implements Callback<List<FhpxPhoto>> {
-    @Override public void success(List<FhpxPhoto> fhpxPhotos, Response response) {
-      EventBus.getDefault().post(new AddPhotoListToGridEvent(fhpxPhotos));
-    }
 
-    @Override public void failure(RetrofitError error) {
-      Toast.makeText(mContext, "Connection error", Toast.LENGTH_SHORT).show();
+  public static String getPhotoUrl(Photo photo, PhotoSize size) {
+    switch (size) {
+      case THUMB:
+        return photo.getImages().get(0).getUrl();
+      case NORMAL:
+        return photo.getImages().get(1).getUrl();
+      case LARGE:
+        return photo.getImages().get(2).getUrl();
+      default:
+        throw new InvalidPhotoSizeException();
     }
   }
 }
