@@ -83,27 +83,45 @@ public class FhpxPhotoService {
     // highest_rating — Sort by highest rating achieved (Menu action Sort by rating)
     sortOption = (sortOption == null) ? "rating" : sortOption;
 
-    mLastSearchQuery = searchQuery;
-    mLastSortOption = sortOption;
-    mLastPageLoaded = pageNumber;
+    updateHistory(searchQuery, sortOption, pageNumber);
+    updateQueryParams(searchQuery, sortOption, pageNumber);
+    makeInfoToast(searchQuery, pageNumber);
 
+    mFhpxSearch.searchPhotos(mApiQueryOptions, Image_Sizes, new FhpxPhotoCallBack());
+  }
+
+  private void updateQueryParams(String searchQuery, String sortOption, int pageNumber) {
     mApiQueryOptions.put("term", searchQuery);
     mApiQueryOptions.put("sort", sortOption);
     mApiQueryOptions.put("page", String.valueOf(pageNumber));
+  }
 
-    mFhpxSearch.searchPhotos(mApiQueryOptions, Image_Sizes, new Callback<List<FhpxPhoto>>() {
-      @Override public void success(List<FhpxPhoto> fhpxPhotos, Response response) {
-        EventBus.getDefault().post(new AddPhotoSetToGridEvent(fhpxPhotos));
-      }
+  private void updateHistory(String searchQuery, String sortOption, int pageNumber) {
+    mLastSearchQuery = searchQuery;
+    mLastSortOption = sortOption;
+    mLastPageLoaded = pageNumber;
+  }
 
-      @Override public void failure(RetrofitError error) {
-        Toast.makeText(mContext, "Connection error", Toast.LENGTH_SHORT).show();
-      }
-    });
+  private void makeInfoToast(String searchQuery, int pageNumber) {
+    if (pageNumber == 1) {
+      Toast.makeText(mContext, "Searching for: " + searchQuery, Toast.LENGTH_SHORT).show();
+    } else {
+      Toast.makeText(mContext, "Loading more results..", Toast.LENGTH_SHORT).show();
+    }
   }
 
   private String cleanSearchQuery(String searchQuery) {
     searchQuery = searchQuery.replaceAll("[^a-zA-Z0-9]+", "+").replaceAll("\\+$", "");
     return searchQuery;
+  }
+
+  private class FhpxPhotoCallBack implements Callback<List<FhpxPhoto>> {
+    @Override public void success(List<FhpxPhoto> fhpxPhotos, Response response) {
+      EventBus.getDefault().post(new AddPhotoSetToGridEvent(fhpxPhotos));
+    }
+
+    @Override public void failure(RetrofitError error) {
+      Toast.makeText(mContext, "Connection error", Toast.LENGTH_SHORT).show();
+    }
   }
 }
