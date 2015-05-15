@@ -11,6 +11,7 @@ import me.jitan.fhpxdemo.event.LoadPhotoDetailEvent;
 import me.jitan.fhpxdemo.event.SearchEvent;
 import me.jitan.fhpxdemo.helper.FragmentHelper;
 import me.jitan.fhpxdemo.helper.ToolbarHelper;
+import me.jitan.fhpxdemo.retrofit.FhpxPhotoService;
 
 public class MainActivity extends AppCompatActivity {
   @Override protected void onCreate(Bundle savedInstanceState) {

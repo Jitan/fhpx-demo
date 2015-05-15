@@ -1,4 +1,4 @@
-package me.jitan.fhpxdemo;
+package me.jitan.fhpxdemo.retrofit;
 
 import java.util.List;
 import java.util.Map;

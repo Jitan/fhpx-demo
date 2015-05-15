@@ -1,4 +1,4 @@
-package me.jitan.fhpxdemo;
+package me.jitan.fhpxdemo.retrofit;
 
 import android.content.Context;
 import android.util.Log;
@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import me.jitan.fhpxdemo.adapter.FhpxPhotoAdapter;
 import me.jitan.fhpxdemo.event.AddPhotoSetToGridEvent;
 import me.jitan.fhpxdemo.model.FhpxPhoto;
 import retrofit.Callback;
@@ -91,6 +90,7 @@ public class FhpxPhotoService {
     mApiQueryOptions.put("term", searchQuery);
     mApiQueryOptions.put("sort", sortOption);
     mApiQueryOptions.put("page", String.valueOf(pageNumber));
+
     mFhpxSearch.searchPhotos(mApiQueryOptions, Image_Sizes, new Callback<List<FhpxPhoto>>() {
       @Override public void success(List<FhpxPhoto> fhpxPhotos, Response response) {
         EventBus.getDefault().post(new AddPhotoSetToGridEvent(fhpxPhotos));

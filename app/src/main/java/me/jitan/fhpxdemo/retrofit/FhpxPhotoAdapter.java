@@ -1,4 +1,4 @@
-package me.jitan.fhpxdemo.adapter;
+package me.jitan.fhpxdemo.retrofit;
 
 import android.util.Log;
 import com.google.gson.JsonArray;
@@ -10,7 +10,6 @@ import com.google.gson.JsonParseException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import me.jitan.fhpxdemo.FhpxPhotoService;
 import me.jitan.fhpxdemo.model.FhpxPhoto;
 
 public class FhpxPhotoAdapter implements JsonDeserializer<List<FhpxPhoto>> {
