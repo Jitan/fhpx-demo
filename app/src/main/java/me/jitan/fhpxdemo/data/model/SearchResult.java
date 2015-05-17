@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchResults {
+public class SearchResult {
 
   @SerializedName("current_page") @Expose private Integer currentPage;
   @SerializedName("total_pages") @Expose private Integer totalPages;

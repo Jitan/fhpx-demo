@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import me.jitan.fhpxdemo.data.model.Photo;
-import me.jitan.fhpxdemo.data.model.SearchResults;
+import me.jitan.fhpxdemo.data.model.SearchResult;
 import me.jitan.fhpxdemo.event.AddPhotoListToGridEvent;
 import me.jitan.fhpxdemo.event.CouldNotLoadImageEvent;
 import retrofit.Callback;
@@ -67,7 +67,7 @@ public class PhotoService {
 
     updateHistory(searchQuery, sortOption, pageNumber);
     updateQueryParams(searchQuery, sortOption, pageNumber);
-    mFhpxSearchService.searchPhotos(mQueryParams, Image_Sizes, new SearchResultCallback());
+    mFhpxSearchService.searchPhotos(mQueryParams, Image_Sizes, new SearchCallback());
   }
 
   private void updateHistory(String searchQuery, String sortOption, int pageNumber) {
@@ -87,9 +87,9 @@ public class PhotoService {
     return searchQuery;
   }
 
-  private class SearchResultCallback implements Callback<SearchResults> {
-    @Override public void success(SearchResults searchResults, Response response) {
-      EventBus.getDefault().post(new AddPhotoListToGridEvent(searchResults.getPhotos()));
+  private class SearchCallback implements Callback<SearchResult> {
+    @Override public void success(SearchResult searchResult, Response response) {
+      EventBus.getDefault().post(new AddPhotoListToGridEvent(searchResult.getPhotos()));
     }
 
     @Override public void failure(RetrofitError error) {
