@@ -6,8 +6,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import me.jitan.fhpxdemo.R;
-import me.jitan.fhpxdemo.ui.fragment.GridFragment;
-import me.jitan.fhpxdemo.ui.fragment.PhotoDetailFragment;
+import me.jitan.fhpxdemo.ui.grid.GridFragment;
+import me.jitan.fhpxdemo.ui.PhotoDetailFragment;
 
 public class FragmentHelper {
   private static String mLastVisibleFragment;

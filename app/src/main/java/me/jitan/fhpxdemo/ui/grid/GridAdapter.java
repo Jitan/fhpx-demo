@@ -1,4 +1,4 @@
-package me.jitan.fhpxdemo.ui.fragment;
+package me.jitan.fhpxdemo.ui.grid;
 
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -42,9 +42,8 @@ public class GridAdapter extends ArrayAdapter<Photo> {
 
   private void loadThumb(int position) {
     Photo photoToBeLoaded = getItem(position);
-    String thumbUrl = PhotoService.getPhotoUrl(photoToBeLoaded, PhotoSize.THUMB);
     Glide.with(mFragment)
-        .load(thumbUrl)
+        .load(PhotoService.getPhotoUrl(photoToBeLoaded, PhotoSize.THUMB))
         .crossFade()
         .into(new GlideDrawableImageViewTarget(mHolder.imageView) {
           @Override public void onResourceReady(GlideDrawable resource,

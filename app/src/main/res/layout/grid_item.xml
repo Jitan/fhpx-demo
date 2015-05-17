@@ -3,7 +3,7 @@
     android:layout_height="match_parent"
     >
 
-  <me.jitan.fhpxdemo.ui.fragment.GridImageView
+  <me.jitan.fhpxdemo.ui.grid.GridImageView
       android:id="@+id/grid_item_image"
       android:layout_width="match_parent"
       android:layout_height="match_parent"

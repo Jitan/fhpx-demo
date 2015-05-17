@@ -1,4 +1,4 @@
-package me.jitan.fhpxdemo.ui.fragment;
+package me.jitan.fhpxdemo.ui;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;

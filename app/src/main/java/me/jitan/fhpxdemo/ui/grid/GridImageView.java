@@ -1,4 +1,4 @@
-package me.jitan.fhpxdemo.ui.fragment;
+package me.jitan.fhpxdemo.ui.grid;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -19,6 +19,6 @@ public class GridImageView extends ImageView {
 
   @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    setMeasuredDimension(getMeasuredWidth(), getMeasuredWidth()); //Snap to width
+    setMeasuredDimension(getMeasuredWidth(), getMeasuredWidth());
   }
 }
