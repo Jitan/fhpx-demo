@@ -14,7 +14,9 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnItemClick;
 import de.greenrobot.event.EventBus;
+import java.util.List;
 import me.jitan.fhpxdemo.R;
+import me.jitan.fhpxdemo.data.model.Photo;
 import me.jitan.fhpxdemo.event.AddPhotoListToGridEvent;
 import me.jitan.fhpxdemo.event.AddPhotoToGridEvent;
 import me.jitan.fhpxdemo.event.LoadNextPageEvent;
@@ -78,7 +80,10 @@ public class GridFragment extends Fragment {
   }
 
   public void onEventMainThread(AddPhotoListToGridEvent event) {
-    mGridAdapter.addAll(event.getPhotoList());
+    List<Photo> photos = event.getPhotoList();
+    for (Photo photo : photos) {
+      mGridAdapter.add(photo);
+    }
   }
 
   @Override public void onStop() {
