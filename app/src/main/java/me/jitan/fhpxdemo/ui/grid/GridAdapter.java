@@ -13,7 +13,7 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import me.jitan.fhpxdemo.R;
-import me.jitan.fhpxdemo.data.PhotoService;
+import me.jitan.fhpxdemo.data.FhpxApiService;
 import me.jitan.fhpxdemo.data.PhotoSize;
 import me.jitan.fhpxdemo.data.model.Photo;
 
@@ -43,7 +43,7 @@ public class GridAdapter extends ArrayAdapter<Photo> {
   private void loadThumb(int position) {
     Photo photoToBeLoaded = getItem(position);
     Glide.with(mFragment)
-        .load(PhotoService.getPhotoUrl(photoToBeLoaded, PhotoSize.THUMB))
+        .load(FhpxApiService.getPhotoUrl(photoToBeLoaded, PhotoSize.THUMB))
         .crossFade()
         .into(new GlideDrawableImageViewTarget(mHolder.imageView) {
           @Override public void onResourceReady(GlideDrawable resource,

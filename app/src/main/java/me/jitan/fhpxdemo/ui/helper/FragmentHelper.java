@@ -6,8 +6,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import me.jitan.fhpxdemo.R;
-import me.jitan.fhpxdemo.ui.grid.GridFragment;
 import me.jitan.fhpxdemo.ui.PhotoDetailFragment;
+import me.jitan.fhpxdemo.ui.grid.GridFragment;
 
 public class FragmentHelper {
   private static String mLastVisibleFragment;
@@ -19,6 +19,9 @@ public class FragmentHelper {
   public final static String PHOTO_DETAIL_FRAGMENT_TAG = "photo_detail_fragment";
   public final static String GRID_FRAGMENT_TAG = "grid_fragment";
   public static final String ACTIVE_FRAGMENT_KEY = "active_fragment_key";
+
+  private FragmentHelper() {
+  }
 
   public static void setupFragments(AppCompatActivity activity, Bundle savedInstanceState) {
     mActivity = activity;

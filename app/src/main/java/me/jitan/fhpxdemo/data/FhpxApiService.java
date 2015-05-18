@@ -15,33 +15,33 @@ import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class PhotoService {
+public class FhpxApiService {
   private final static String Fhpx_Api_Endpoint = "https://api.500px.com/v1";
   private final static String Fhpx_Consumer_Key = "dNRpNAjucR4By3KM9HvFWgb4fa1rNArB6R2nBfv2";
   private final static List<PhotoSize> Image_Sizes =
       Arrays.asList(PhotoSize.THUMB, PhotoSize.NORMAL, PhotoSize.LARGE);
   private final static String Number_Of_Search_Results = "100";
 
-  private static PhotoService mInstance;
-  private static FhpxSearchService mFhpxSearchService;
+  private static FhpxApiService mInstance;
+  private static FhpxApi mFhpxApi;
 
   private Map<String, String> mQueryParams;
   private String mLastSearchQuery, mLastSortOption;
   private int mLastPageLoaded;
 
-  public static PhotoService getInstance() {
+  public static FhpxApiService getInstance() {
     if (mInstance == null) {
-      mInstance = new PhotoService();
+      mInstance = new FhpxApiService();
     }
     return mInstance;
   }
 
-  private PhotoService() {
+  private FhpxApiService() {
     RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(Fhpx_Api_Endpoint)
         .setLogLevel(RestAdapter.LogLevel.BASIC)
         .build();
+    mFhpxApi = restAdapter.create(FhpxApi.class);
 
-    mFhpxSearchService = restAdapter.create(FhpxSearchService.class);
     mQueryParams = new HashMap<>();
     mQueryParams.put("rpp", Number_Of_Search_Results);
     mQueryParams.put("consumer_key", Fhpx_Consumer_Key);
@@ -67,7 +67,17 @@ public class PhotoService {
 
     updateHistory(searchQuery, sortOption, pageNumber);
     updateQueryParams(searchQuery, sortOption, pageNumber);
-    mFhpxSearchService.searchPhotos(mQueryParams, Image_Sizes, new SearchCallback());
+    mFhpxApi.searchPhotos(mQueryParams, Image_Sizes, new SearchCallback());
+  }
+
+  private class SearchCallback implements Callback<SearchResult> {
+    @Override public void success(SearchResult searchResult, Response response) {
+      EventBus.getDefault().post(new AddPhotoListToGridEvent(searchResult.getPhotos()));
+    }
+
+    @Override public void failure(RetrofitError error) {
+      EventBus.getDefault().post(new CouldNotLoadImageEvent());
+    }
   }
 
   private void updateHistory(String searchQuery, String sortOption, int pageNumber) {
@@ -85,16 +95,6 @@ public class PhotoService {
   private String cleanSearchQuery(String searchQuery) {
     searchQuery = searchQuery.replaceAll("[^a-zA-Z0-9]+", "+").replaceAll("\\+$", "");
     return searchQuery;
-  }
-
-  private class SearchCallback implements Callback<SearchResult> {
-    @Override public void success(SearchResult searchResult, Response response) {
-      EventBus.getDefault().post(new AddPhotoListToGridEvent(searchResult.getPhotos()));
-    }
-
-    @Override public void failure(RetrofitError error) {
-      EventBus.getDefault().post(new CouldNotLoadImageEvent());
-    }
   }
 
   public static String getPhotoUrl(Photo photo, PhotoSize size) {

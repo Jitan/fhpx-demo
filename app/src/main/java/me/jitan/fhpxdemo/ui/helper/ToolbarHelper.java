@@ -29,6 +29,9 @@ public class ToolbarHelper {
   private static EditText mSearchField;
   private static ActionBar mActionBar;
 
+  private ToolbarHelper() {
+  }
+
   public static void setupToolbar(AppCompatActivity activity) {
     mActivity = activity;
     Toolbar toolbar = ButterKnife.findById(mActivity, R.id.toolbar);

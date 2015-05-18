@@ -19,7 +19,7 @@ import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import de.greenrobot.event.EventBus;
 import me.jitan.fhpxdemo.R;
 import me.jitan.fhpxdemo.event.LoadPhotoDetailEvent;
-import me.jitan.fhpxdemo.data.PhotoService;
+import me.jitan.fhpxdemo.data.FhpxApiService;
 import me.jitan.fhpxdemo.data.PhotoSize;
 import me.jitan.fhpxdemo.data.model.Photo;
 import uk.co.senab.photoview.PhotoViewAttacher;
@@ -60,7 +60,7 @@ public class PhotoDetailFragment extends Fragment {
     mAttacher = new PhotoViewAttacher(mImageView);
 
     Glide.with(this)
-        .load(PhotoService.getPhotoUrl(photo, PhotoSize.LARGE))
+        .load(FhpxApiService.getPhotoUrl(photo, PhotoSize.LARGE))
         .placeholder(thumb)
         .into(new GlideDrawableImageViewTarget(mImageView) {
           @Override public void onResourceReady(GlideDrawable resource,

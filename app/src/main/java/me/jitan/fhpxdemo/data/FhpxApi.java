@@ -8,7 +8,7 @@ import retrofit.http.GET;
 import retrofit.http.Query;
 import retrofit.http.QueryMap;
 
-public interface FhpxSearchService {
+public interface FhpxApi {
   @GET("/photos/search") void searchPhotos(@QueryMap Map<String, String> searchOptions,
       @Query(value = "image_size[]", encodeValue = false) List<PhotoSize> imageSizes, Callback<SearchResult> cb);
 }

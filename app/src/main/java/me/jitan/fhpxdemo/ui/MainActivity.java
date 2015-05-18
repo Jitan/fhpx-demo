@@ -7,7 +7,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 import de.greenrobot.event.EventBus;
 import me.jitan.fhpxdemo.R;
-import me.jitan.fhpxdemo.data.PhotoService;
+import me.jitan.fhpxdemo.data.FhpxApiService;
 import me.jitan.fhpxdemo.event.CouldNotLoadImageEvent;
 import me.jitan.fhpxdemo.event.LoadNextPageEvent;
 import me.jitan.fhpxdemo.event.LoadPhotoDetailEvent;
@@ -31,12 +31,12 @@ public class MainActivity extends AppCompatActivity {
 
   public void onEventMainThread(SearchEvent event) {
     Toast.makeText(this, "Searching for: " + event.getSearchQuery(), Toast.LENGTH_SHORT).show();
-    PhotoService.getInstance().doSearch(event.getSearchQuery(), event.getSortOption());
+    FhpxApiService.getInstance().doSearch(event.getSearchQuery(), event.getSortOption());
   }
 
   public void onEventMainThread(LoadNextPageEvent event) {
     Toast.makeText(this, "Loading more results..", Toast.LENGTH_SHORT).show();
-    PhotoService.getInstance().loadNextPage();
+    FhpxApiService.getInstance().loadNextPage();
   }
 
   public void onEventMainThread(LoadPhotoDetailEvent event) {
