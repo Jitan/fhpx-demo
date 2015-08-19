@@ -1,6 +1,6 @@
-# fhpx-demo
+##fhpx-demo
 
-###Simple app to browse [500px](https://500px.com/) photo content using [500px public API](https://github.com/500px/api-documentation).
+####Simple app to browse [500px](https://500px.com/) photo content using [500px public API](https://github.com/500px/api-documentation).
 
 * Retrieves search results and displays images in gridview. 
 * Continually loads images while scrolling down.
